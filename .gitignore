@@ -1,0 +1,47 @@
+# Codex and local workspace state
+.agents/
+.codex/
+
+# Audit archives and disk images
+audit-*.tar.gz
+*.img
+*.img.xz
+*.img.gz
+*.7z
+
+# Models and large runtime artifacts
+*.rkllm
+*.rknn
+*.onnx
+*.safetensors
+*.bin
+*.pt
+*.pth
+models/
+
+# Build products
+build/
+cmake-build-*/
+CMakeFiles/
+CMakeCache.txt
+Makefile
+*.o
+*.a
+*.so
+*.ko
+
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+
+# Editor and OS files
+.idea/
+.vscode/
+*.swp
+*~
+.DS_Store
+
+# Extracted third-party kernel source; retain provenance in manifests
+vendor-src/
