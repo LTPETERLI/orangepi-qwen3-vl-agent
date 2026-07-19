@@ -1,0 +1,223 @@
+schema_version: "1.0"
+project: "orangepi-qwen3-vl-agent"
+last_updated: "2026-07-19T22:20:00+08:00"
+active_branch: "test/environment-setup"
+update_policy:
+  required_on:
+    - "dependency installation or removal"
+    - "toolchain version change"
+    - "runtime, driver, kernel, model, or firmware change"
+    - "artifact download or replacement"
+    - "validation status change"
+  artifact_fields:
+    - "source"
+    - "version"
+    - "target"
+    - "size_bytes"
+    - "sha256"
+    - "status"
+  allowed_statuses:
+    - "verified"
+    - "present_unverified"
+    - "planned"
+    - "blocked"
+    - "rejected"
+
+hosts:
+  development_laptop:
+    role: "source control, cross-build, and optional model conversion"
+    architecture: "x86_64"
+    os:
+      distribution: "Ubuntu"
+      version: "22.04"
+      kernel: "6.8.0-124-generic"
+      status: "verified"
+    tools:
+      git:
+        version: "2.34.1"
+        status: "verified"
+      python:
+        version: "3.10.12"
+        status: "verified"
+      pip:
+        version: null
+        status: "planned"
+      cmake:
+        version: null
+        status: "planned"
+      gcc:
+        version: null
+        status: "planned"
+      gxx:
+        version: null
+        status: "planned"
+      pkg_config:
+        version: null
+        status: "planned"
+      ninja:
+        version: null
+        status: "planned"
+
+  orange_pi:
+    role: "AArch64 inference and RGB-D capture"
+    board: "Orange Pi 5 Pro"
+    soc: "RK3588S"
+    memory: "16GB"
+    architecture: "aarch64"
+    address: "192.168.31.89"
+    current_environment:
+      os:
+        distribution: "Ubuntu"
+        version: "20.04.6"
+        vendor_build: "1.0.6"
+        status: "verified"
+      kernel:
+        version: "5.10.160-rockchip-rk3588"
+        status: "verified"
+      python:
+        version: "3.8.10"
+        status: "verified"
+      pip:
+        version: "20.0.2"
+        status: "verified"
+      rknpu:
+        version: "0.9.6"
+        linkage: "built-in"
+        acceptance: "fail"
+        status: "blocked"
+    candidate_environment:
+      image: "Orangepi5pro_1.0.6_ubuntu_jammy_server_linux6.1.43.7z"
+      os_version: "22.04"
+      kernel_version: "6.1.43-rockchip-rk3588"
+      rknpu_version: null
+      status: "present_unverified"
+      note: "Filename is verified from the official Orange Pi 5 Pro image list; image SHA256 and bundled RKNPU version remain unverified."
+
+hardware:
+  camera:
+    interface_name: "RealSenseCamera"
+    manager_name: "RealSenseManager"
+    config_name: "realsense_config"
+    manufacturer: "RealSense"
+    model: "D455"
+    usb_vendor_id: "8086"
+    usb_product_id: "0b5c"
+    required_usb_speed: "5000M"
+    observed_usb_speed: "5000M"
+    initial_streams:
+      color: "640x480@15"
+      depth: "640x480@15"
+    firmware_update_allowed: false
+    status: "verified"
+
+rockchip_stack:
+  rknn_llm_repository:
+    source: "https://github.com/airockchip/rknn-llm.git"
+    tag: "release-v1.3.0"
+    commit: "878f9361fd3afa7e167b7079918918f78d2c1c2a"
+    status: "verified"
+  rknpu_driver_source:
+    version: "0.9.8"
+    artifact: "rknpu_driver_0.9.8_20241009.tar.bz2"
+    sha256: "188306a3eba7ca48c186fe2a39acf232dec8536484581e54e9b96c3f65677eba"
+    installation_authorized: false
+    status: "verified"
+  rkllm_toolkit:
+    required_version: ">=1.3.0"
+    selected_version: "1.3.0"
+    python_abi: "cp310"
+    artifact: "rkllm_toolkit-1.3.0-cp310-cp310-linux_x86_64.whl"
+    sha256: "2523e71f305963495c9fccc639dbcf8f9f49a9b8c6d6f6b355e58a3af076f753"
+    installed: false
+    status: "verified"
+  rkllm_runtime:
+    selected_version: "1.3.0"
+    target: "linux-aarch64"
+    artifact: "librkllmrt.so"
+    sha256: "6a9e4fc5324c68921c3a900340361e107af7599fe34dc8fa7759b2c5ae22a6e6"
+    deployment: "application-private"
+    installed: false
+    status: "verified"
+  rkllm_header:
+    artifact: "rkllm.h"
+    sha256: "80596a578f7f8e70df6eda1c2cbead3bfced14623a190258f2bd009a3d1f72cf"
+    status: "verified"
+  rknn_toolkit2:
+    required_version: ">=2.3.2"
+    selected_version: null
+    installed: false
+    status: "planned"
+  rknn_runtime:
+    selected_version: null
+    target: "linux-aarch64"
+    deployment: "application-private"
+    installed: false
+    status: "planned"
+
+models:
+  qwen3_vl_2b:
+    upstream_source: "Qwen/Qwen3-VL-2B-Instruct"
+    vision:
+      artifact: "qwen3-vl-2b_vision_rk3588.rknn"
+      input_size: "448x448"
+      sha256: null
+      status: "planned"
+    language:
+      artifact: "qwen3-vl-2b-instruct_w8a8_rk3588.rkllm"
+      quantization: "W8A8"
+      context_length: 4096
+      sha256: null
+      status: "planned"
+
+camera_stack:
+  librealsense:
+    backend: "RSUSB/user-space"
+    selected_version: null
+    installation_prefix: null
+    dkms_allowed: false
+    status: "planned"
+  v4l2:
+    video_nodes: "/dev/video0 through /dev/video5"
+    status: "verified"
+
+third_party_sources:
+  qengineering_qwen3_vl_2b_npu:
+    source: "https://github.com/Qengineering/Qwen3-VL-2B-NPU.git"
+    integration: "git-submodule"
+    commit: "03118c9887e6489c92d2bbc7ba4c772f12898094"
+    runtime_track: "RKLLM 1.2.3-based"
+    acceptance: "reference-only until runtime provenance and source fixes are complete"
+    status: "present_unverified"
+
+dependency_chain:
+  - component: "official_multimodal_demo"
+    requires:
+      - "Orange Pi 5 Pro device tree and bootable vendor kernel"
+      - "RKNPU >=0.9.8"
+      - "version-matched application-private RKNN runtime"
+      - "RKLLM runtime 1.3.0"
+      - "official Qwen3-VL-2B RKNN and RKLLM artifacts"
+    status: "blocked"
+    blocked_by: "No verified Orange Pi 5 Pro RKNPU >=0.9.8 boot baseline"
+  - component: "realsense_capture"
+    requires:
+      - "D455 at 5000M"
+      - "librealsense with RSUSB backend"
+      - "project-private installation prefix"
+    status: "planned"
+  - component: "offline_agent"
+    requires:
+      - "official_multimodal_demo accepted"
+      - "realsense_capture accepted"
+      - "serialized NPU scheduling"
+    status: "blocked"
+    blocked_by: "Upstream milestones are incomplete"
+
+prohibited_until_approved:
+  - "run an NPU model"
+  - "replace system librknnrt.so"
+  - "replace system librkllmrt.so"
+  - "install a generic kernel"
+  - "install a 5B or 5 Plus kernel package on Orange Pi 5 Pro"
+  - "update D455 firmware"
+  - "merge environment work into main"
