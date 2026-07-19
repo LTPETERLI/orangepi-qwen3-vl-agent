@@ -249,6 +249,33 @@ documentation_sources:
       - "eMMC dd workflow is performed after booting a separate TF-card Linux system."
     status: "verified"
 
+windows_emmc_flash_toolchain:
+  host_target: "Windows x86/x64"
+  driver_assistant:
+    version: "5.12"
+    artifact: "DriverAssitant_v5.12.7z"
+    sha256: "71dcdac8fe13aa5b32f66d9ca2fb29130ccdbd8ae831371fc581b0f027f91ccd"
+    purpose: "Install RockUSB and Rockchip ADB drivers"
+    status: "verified"
+  rkdevtool:
+    version: "3.15"
+    artifact: "RKDevTool_Release_v3.15.7z"
+    sha256: "69e3eff72bd89c07458cd01b0652d3e6d48924d1455b2b73aba42efb3e222a17"
+    executable: "RKDevTool_v3.15_for_window/RKDevTool.exe"
+    status: "verified"
+  miniloader:
+    artifact: "MiniLoader_OrangePi5Pro_RK3588.7z"
+    sha256: "38ad3676f477fabe7fff1f81c5b5c1e62b446a600df1736e52154a9c56fd7810"
+    loader: "MiniLoaderAll.bin"
+    loader_size_bytes: 481728
+    emmc_config: "rk3588_linux_emmc.cfg"
+    status: "verified"
+  destructive_write_authorized: true
+  maskrom_device_verified: false
+  target_emmc_verified: false
+  write_started: false
+  status: "planned"
+
 dependency_chain:
   - component: "official_multimodal_demo"
     requires:
