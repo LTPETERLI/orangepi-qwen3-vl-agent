@@ -112,6 +112,21 @@ hosts:
       rknpu_version: null
       status: "present_unverified"
       note: "Filename is verified from the official Orange Pi 5 Pro image list; image SHA256 and bundled RKNPU version remain unverified."
+    downloaded_image_candidate:
+      image: "Orangepi5pro_1.0.6_ubuntu_jammy_desktop_xfce_linux6.1.43.7z"
+      local_path: "/home/ubt/下载/Orangepi5pro_1.0.6_ubuntu_jammy_desktop_xfce_linux6.1.43.7z"
+      source_page: "Orange Pi 5 Pro official Ubuntu image folder"
+      os_version: "22.04 Jammy"
+      desktop: "XFCE"
+      kernel_version: "6.1.43-rockchip-rk3588"
+      size_bytes: 1527901957
+      observed_sha256: "f9698cd5a9c308423514df99885ea4e93f60c2ef0ef61575b561afbde3dffde2"
+      official_sha256: null
+      archive_integrity_verified: false
+      internal_image_identity_verified: false
+      bundled_rknpu_version: null
+      status: "present_unverified"
+      note: "Correct board family by filename, but do not flash until the official checksum and archive contents are verified. Desktop is optional and consumes more resources than Server."
 
 hardware:
   camera:
