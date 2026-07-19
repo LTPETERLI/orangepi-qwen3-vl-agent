@@ -109,9 +109,9 @@ hosts:
       image: "Orangepi5pro_1.0.6_ubuntu_jammy_server_linux6.1.43.7z"
       os_version: "22.04"
       kernel_version: "6.1.43-rockchip-rk3588"
-      rknpu_version: null
+      rknpu_version: "0.9.6"
       status: "present_unverified"
-      note: "Filename is verified from the official Orange Pi 5 Pro image list; image SHA256 and bundled RKNPU version remain unverified."
+      note: "The official Orange Pi 5 Pro manual v1.3 groups release 1.0.6 under the RKNPU 0.9.6 update. This is a possible 5 Pro Linux 6.1 build baseline, not the final RKNPU >=0.9.8 baseline. Image SHA256 remains unverified."
     downloaded_image_candidate:
       image: "Orangepi5pro_1.0.6_ubuntu_jammy_desktop_xfce_linux6.1.43.7z"
       local_path: "/home/ubt/下载/Orangepi5pro_1.0.6_ubuntu_jammy_desktop_xfce_linux6.1.43.7z"
@@ -124,9 +124,9 @@ hosts:
       official_sha256: null
       archive_integrity_verified: false
       internal_image_identity_verified: false
-      bundled_rknpu_version: null
+      bundled_rknpu_version: "0.9.6"
       status: "present_unverified"
-      note: "Correct board family by filename, but do not flash until the official checksum and archive contents are verified. Desktop is optional and consumes more resources than Server."
+      note: "Correct board family by filename. Official manual v1.3 documents release 1.0.6 with RKNPU 0.9.6, so this does not satisfy the final >=0.9.8 gate. Do not flash until the official checksum and archive contents are verified."
 
 hardware:
   camera:
@@ -223,6 +223,20 @@ third_party_sources:
     runtime_track: "RKLLM 1.2.3-based"
     acceptance: "reference-only until runtime provenance and source fixes are complete"
     status: "present_unverified"
+
+documentation_sources:
+  orange_pi_5_pro_manual:
+    artifact: "OrangePi_5_Pro_RK3588S_用户手册_v1.3-1.pdf"
+    local_path: "/home/ubt/Downloads/用户手册/OrangePi_5_Pro_RK3588S_用户手册_v1.3-1.pdf"
+    pages: 587
+    creation_date: "2024-11-18"
+    sha256: "3c8d71b171d75043224db347d2026ea0fb6638242a48e363579587ce2689237b"
+    evidence:
+      - "Release 1.0.6 includes Orange Pi 5 Pro Jammy Desktop/Server Linux 6.1.43 images."
+      - "Release notes state the kernel RKNPU driver was upgraded to 0.9.6."
+      - "TF-card workflow requires extracting .img and .sha, running sha256sum -c, and completing the writer verification pass."
+      - "eMMC dd workflow is performed after booting a separate TF-card Linux system."
+    status: "verified"
 
 dependency_chain:
   - component: "official_multimodal_demo"
