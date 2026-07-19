@@ -94,23 +94,35 @@ hosts:
     current_environment:
       os:
         distribution: "Ubuntu"
-        version: "20.04.6"
+        version: "22.04.5"
         vendor_build: "1.0.6"
         status: "verified"
       kernel:
-        version: "5.10.160-rockchip-rk3588"
+        version: "6.1.43-rockchip-rk3588"
+        build: "#1.0.6 SMP Wed Nov 13 00:19:29 CST 2024"
         status: "verified"
       python:
-        version: "3.8.10"
+        version: "3.10.12"
         status: "verified"
       pip:
-        version: "20.0.2"
+        version: null
+        installed: false
         status: "verified"
       rknpu:
         version: "0.9.6"
         linkage: "built-in"
+        kernel_config: "CONFIG_ROCKCHIP_RKNPU=y"
         acceptance: "fail"
         status: "blocked"
+      boot_media:
+        device: "/dev/mmcblk0"
+        type: "eMMC"
+        size: "233 GiB"
+        root: "/dev/mmcblk0p2"
+        boot: "/dev/mmcblk0p1"
+        device_tree: "/boot/dtb-6.1.43-rockchip-rk3588/rockchip/rk3588s-orangepi-5-pro.dtb"
+        gpt_backup_header_valid: false
+        status: "present_unverified"
     candidate_environment:
       image: "Orangepi5pro_1.0.6_ubuntu_jammy_server_linux6.1.43.7z"
       os_version: "22.04"
@@ -271,10 +283,12 @@ windows_emmc_flash_toolchain:
     emmc_config: "rk3588_linux_emmc.cfg"
     status: "verified"
   destructive_write_authorized: true
-  maskrom_device_verified: false
-  target_emmc_verified: false
-  write_started: false
-  status: "planned"
+  maskrom_device_verified: true
+  target_emmc_verified: true
+  write_started: true
+  write_completed: true
+  post_flash_validation: "POST_FLASH_VALIDATION.md"
+  status: "verified"
 
 dependency_chain:
   - component: "official_multimodal_demo"
