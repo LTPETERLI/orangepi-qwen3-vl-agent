@@ -77,6 +77,12 @@ hosts:
         invocation: "./scripts/openspec.sh"
         validation: "openspec validate --all --json: 1 passed, 0 failed"
         status: "verified"
+      seven_zip:
+        version: "26.01"
+        installation: "project-private .tools/7zip-26.01"
+        source: "https://www.7-zip.org/a/7z2601-linux-x64.tar.xz"
+        observed_sha256: "8ea0fc8a135e7b848e80a4116fe22dff56c8c4518dde1f43cce67f4e340b437a"
+        status: "verified"
 
   orange_pi:
     role: "AArch64 inference and RGB-D capture"
@@ -121,12 +127,17 @@ hosts:
       kernel_version: "6.1.43-rockchip-rk3588"
       size_bytes: 1527901957
       observed_sha256: "f9698cd5a9c308423514df99885ea4e93f60c2ef0ef61575b561afbde3dffde2"
-      official_sha256: null
-      archive_integrity_verified: false
-      internal_image_identity_verified: false
+      archive_integrity_verified: true
+      image_path: "/home/ubt/Downloads/orangepi5pro-1.0.6-jammy-xfce-6.1.43/Orangepi5pro_1.0.6_ubuntu_jammy_desktop_xfce_linux6.1.43.img"
+      image_size_bytes: 8778678272
+      image_sha256: "831cbf13b084655f9f9ad9113e6109e16b80c061333f1221912fbcfb7018849a"
+      image_sha256_source: "SHA256 file bundled inside the official 7z archive"
+      image_sha256_verified: true
+      internal_image_identity_verified: true
       bundled_rknpu_version: "0.9.6"
-      status: "present_unverified"
-      note: "Correct board family by filename. Official manual v1.3 documents release 1.0.6 with RKNPU 0.9.6, so this does not satisfy the final >=0.9.8 gate. Do not flash until the official checksum and archive contents are verified."
+      partition_layout: "GPT: 1 GiB Linux extended boot + 7.1 GiB Linux filesystem"
+      status: "verified"
+      note: "Archive and extracted image are verified. Official manual v1.3 documents release 1.0.6 with RKNPU 0.9.6, so this is a recovery/Linux 6.1 build baseline rather than the final >=0.9.8 baseline."
 
 hardware:
   camera:

@@ -8,7 +8,7 @@
 
 ## 2. Orange Pi Boot and RKNPU Baseline
 
-- [ ] 2.1 Download the selected official Orange Pi 5 Pro Jammy Server Linux 6.1.43 image and record official size and SHA256.
+- [x] 2.1 Download an official Orange Pi 5 Pro Jammy Desktop Linux 6.1.43 image, verify its archive, and verify the extracted image against the bundled SHA256 file.
 - [ ] 2.2 Obtain explicit approval before flashing or replacing boot artifacts.
 - [ ] 2.3 Verify board model, OS, kernel, device tree, boot media, and RKNPU version after migration.
 - [ ] 2.4 If RKNPU remains below 0.9.8, design and review a 5 Pro-specific full-kernel integration path.
