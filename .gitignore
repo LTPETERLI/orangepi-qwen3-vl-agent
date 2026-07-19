@@ -47,3 +47,4 @@ venv/
 
 # Extracted third-party kernel source; retain provenance in manifests
 vendor-src/
+linux-orangepi/

@@ -1,6 +1,6 @@
 schema_version: "1.0"
 project: "orangepi-qwen3-vl-agent"
-last_updated: "2026-07-19T22:20:00+08:00"
+last_updated: "2026-07-20T00:52:46+08:00"
 active_branch: "test/environment-setup"
 update_policy:
   required_on:
@@ -48,6 +48,36 @@ hosts:
       gcc:
         version: null
         status: "planned"
+      aarch64_cross_gcc:
+        version: "11.2.1 20220111"
+        executable: ".tools/toolchains/gcc-arm-11.2-2022.02-x86_64-aarch64-none-linux-gnu/bin/aarch64-none-linux-gnu-gcc"
+        package: "gcc-arm-11.2-2022.02-x86_64-aarch64-none-linux-gnu.tar.xz"
+        source: "https://mirrors.tuna.tsinghua.edu.cn/armbian-releases/_toolchain/gcc-arm-11.2-2022.02-x86_64-aarch64-none-linux-gnu.tar.xz"
+        size_bytes: 120127944
+        sha256: "52dbac3eb71dbe0916f60a8c5ab9b7dc9b66b3ce513047baa09fae56234e53f3"
+        installed: true
+        status: "verified"
+      bison:
+        version: "2:3.8.2+dfsg-1build1"
+        installed: true
+        status: "verified"
+      flex:
+        version: "2.6.4-8build2"
+        installed: true
+        status: "verified"
+      pahole:
+        version: "1.25-0ubuntu1~22.04.2"
+        installed: true
+        status: "verified"
+      kernel_build_dependencies:
+        make: "4.3-4.1build1"
+        device_tree_compiler: "1.6.1-1"
+        dwarves: "1.25-0ubuntu1~22.04.2"
+        fakeroot: "1.28-1ubuntu1"
+        kmod: "29-1ubuntu1.1"
+        libelf_dev: "0.186-1ubuntu0.1"
+        libssl_dev: "3.0.2-0ubuntu1.25"
+        status: "verified"
       gxx:
         version: null
         status: "planned"
@@ -169,6 +199,38 @@ hardware:
     status: "verified"
 
 rockchip_stack:
+  orange_pi_kernel_source:
+    source: "https://github.com/orangepi-xunlong/linux-orangepi.git"
+    branch: "orange-pi-6.1-rk35xx"
+    commit: "232ed4b97b65da2b7b647c4e3c496f8594b9f3f1"
+    kernel_version: "6.1.99"
+    rknpu_version: "0.9.8"
+    device_tree_source: "arch/arm64/boot/dts/rockchip/rk3588s-orangepi-5-pro.dts"
+    local_path: "/home/ubt/orangepai_ws/linux-orangepi"
+    installation_authorized: false
+    status: "verified"
+  current_kernel_build_baseline:
+    captured_at: "2026-07-20T00:52:46+08:00"
+    audit_path: "audit/kernel-prebuild/board"
+    config_sha256: "71fda36265c332afb98a248bee3fe3b01436f150601056cc072e6fa7d67faa82"
+    dtb_sha256: "5487d0d0b74cbd59c17846c5adbb6372049b7615313b6abd1d4ceca74604e409"
+    boot_method: "U-Boot boot.scr loads fixed /boot/Image, /boot/uInitrd, and /boot/dtb/${fdtfile}"
+    rollback_boot_entry_available: false
+    status: "verified"
+  test_kernel_build:
+    kernel_release: "6.1.99-rknpu098-test1"
+    source_commit: "232ed4b97b65da2b7b647c4e3c496f8594b9f3f1"
+    compiler: "Arm GNU 11.2.1 20220111"
+    build_method: "in-tree vendor build; external O= build is not supported by all Rockchip vendor drivers"
+    image_sha256: "cc3af5b38bfe01fd562e0c311630f7074f74f3684009222df2abb32deea5c20f"
+    config_sha256: "65b50995edb16892858413da4b506199ed20cd8d13535b1b8ff1e5b25ab765c6"
+    system_map_sha256: "a8a0ab4e5596de89c73d486a6368f915596aec7fc71539f588af4e28983ab474"
+    dtb_sha256: "fc6209c02ad2e77f916655b5408d214e89f4f2e5c4ddb52fd65fa3fde1b33629"
+    module_count: 772
+    staging_path: "build/staging/6.1.99-rknpu098-test1"
+    deployed: false
+    installation_authorized: false
+    status: "verified"
   rknn_llm_repository:
     source: "https://github.com/airockchip/rknn-llm.git"
     tag: "release-v1.3.0"
