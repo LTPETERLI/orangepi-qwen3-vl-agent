@@ -1,6 +1,8 @@
 # Codex and local workspace state
 .agents/
 .codex/
+.tools/
+node_modules/
 
 # Audit archives and disk images
 audit-*.tar.gz

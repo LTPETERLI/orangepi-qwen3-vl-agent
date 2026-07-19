@@ -1,0 +1,17 @@
+{
+  "name": "orangepi-qwen3-vl-agent-workspace",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Deployment workspace and durable OpenSpec context for the Orange Pi Qwen3-VL agent.",
+  "scripts": {
+    "openspec": "openspec",
+    "spec:list": "openspec list --json",
+    "spec:validate": "openspec validate --all --json"
+  },
+  "devDependencies": {
+    "@fission-ai/openspec": "1.6.0"
+  },
+  "engines": {
+    "node": ">=20.19.0"
+  }
+}

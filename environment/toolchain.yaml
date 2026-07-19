@@ -57,6 +57,26 @@ hosts:
       ninja:
         version: null
         status: "planned"
+      node:
+        version: "22.23.1"
+        installation: "project-private .tools/node-v22.23.1-linux-x64"
+        source: "https://nodejs.org/dist/v22.23.1/node-v22.23.1-linux-x64.tar.xz"
+        size_bytes: 31068444
+        sha256: "9749e988f437343b7fa832c69ded82a312e41a03116d766797ac14f6f9eee578"
+        status: "verified"
+      npm:
+        version: "10.9.8"
+        bundled_with: "Node.js 22.23.1"
+        status: "verified"
+      openspec:
+        version: "1.6.0"
+        package: "@fission-ai/openspec"
+        installation: "project devDependency"
+        lockfile: "package-lock.json"
+        lockfile_sha256: "a78d86d051853c128826d505c06ed3241fcde0573fe5e27ca953d9312b3221b1"
+        invocation: "./scripts/openspec.sh"
+        validation: "openspec validate --all --json: 1 passed, 0 failed"
+        status: "verified"
 
   orange_pi:
     role: "AArch64 inference and RGB-D capture"

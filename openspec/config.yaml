@@ -1,0 +1,29 @@
+schema: spec-driven
+context: |
+  Project: offline Qwen3-VL-2B agent on Orange Pi 5 Pro 16GB with RealSense D455.
+  Host: Ubuntu 22.04 x86_64 laptop. Target: RK3588S AArch64 board.
+  Source of installed/planned versions: environment/toolchain.yaml.
+  Active integration branch: test/environment-setup. Main is formal-only.
+  Treat kernel, device tree, RKNPU driver, RKNN runtime, RKLLM runtime, headers,
+  models, and demos as a version-matched stack. Never replace system Rockchip
+  libraries or install another Orange Pi model's kernel package.
+  No NPU model execution, system reflash, kernel replacement, firmware update,
+  or merge to main without explicit user approval.
+  Hardware camera is D455, while business interfaces remain model-neutral:
+  RealSenseCamera, RealSenseManager, and realsense_config.
+  Keep third-party Qwen3-VL-2B-NPU as a pinned Git submodule and audit its
+  provenance and code before using it as an accepted deployment path.
+rules:
+  proposal:
+    - State safety gates, rollback, non-goals, and evidence required for acceptance.
+    - Distinguish observed state from planned state.
+  specs:
+    - Use testable SHALL requirements and observable scenarios.
+    - Include version identity and SHA256 requirements for downloaded artifacts.
+  design:
+    - Prefer application-private runtimes and reversible changes.
+    - Record board/OS/kernel/device-tree compatibility assumptions explicitly.
+  tasks:
+    - Keep checkboxes current as work completes.
+    - Update environment/toolchain.yaml whenever versions or validation states change.
+    - Do not mark a gate complete without recorded evidence.
