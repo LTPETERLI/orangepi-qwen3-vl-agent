@@ -13,6 +13,7 @@ The Orange Pi 5 Pro test kernel was cross-compiled successfully on the x86_64 de
 | Target | AArch64, Orange Pi 5 Pro (`RK3588S`) |
 | RKNPU driver | Built-in `0.9.8` |
 | Modules | 772 |
+| Board staging | Uploaded and SHA256-verified |
 | Deployment | Not performed; not authorized |
 
 ## Build Method
@@ -52,6 +53,16 @@ The generated DTB reports:
 model: RK3588S OPi 5 Pro
 compatible: rockchip,rk3588s-orangepi-5-pro rockchip,rk3588
 ```
+
+## Board Staging
+
+The artifacts were uploaded without privilege to:
+
+```text
+/home/orangepi/qwen3_vl_2b_ws/artifacts/kernel/6.1.99-rknpu098-test1/
+```
+
+All four boot artifacts and all 772 modules passed SHA256 verification on the board. The running kernel remained `6.1.43-rockchip-rk3588`; `/boot` and `/lib/modules` were not modified.
 
 ## Safety Gate
 

@@ -1,6 +1,6 @@
 schema_version: "1.0"
 project: "orangepi-qwen3-vl-agent"
-last_updated: "2026-07-20T00:52:46+08:00"
+last_updated: "2026-07-20T10:47:04+08:00"
 active_branch: "test/environment-setup"
 update_policy:
   required_on:
@@ -228,6 +228,12 @@ rockchip_stack:
     dtb_sha256: "fc6209c02ad2e77f916655b5408d214e89f4f2e5c4ddb52fd65fa3fde1b33629"
     module_count: 772
     staging_path: "build/staging/6.1.99-rknpu098-test1"
+    board_staging_path: "/home/orangepi/qwen3_vl_2b_ws/artifacts/kernel/6.1.99-rknpu098-test1"
+    board_staging_verified:
+      boot_artifacts: 4
+      modules: 772
+      verification: "SHA256"
+      status: "verified"
     deployed: false
     installation_authorized: false
     status: "verified"
