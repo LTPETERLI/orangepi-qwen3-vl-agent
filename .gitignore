@@ -6,6 +6,7 @@ node_modules/
 
 # Audit archives and disk images
 audit-*.tar.gz
+audit/kernel-deployment/**/*.tar.gz
 *.img
 *.img.xz
 *.img.gz
