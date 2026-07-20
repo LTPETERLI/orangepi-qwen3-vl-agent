@@ -1,6 +1,6 @@
 schema_version: "1.0"
 project: "orangepi-qwen3-vl-agent"
-last_updated: "2026-07-20T11:25:19+08:00"
+last_updated: "2026-07-20T13:45:00+08:00"
 active_branch: "test/environment-setup"
 update_policy:
   required_on:
@@ -120,7 +120,7 @@ hosts:
     soc: "RK3588S"
     memory: "16GB"
     architecture: "aarch64"
-    address: "192.168.31.89"
+    address: "10.10.24.218"
     current_environment:
       os:
         distribution: "Ubuntu"
@@ -314,17 +314,35 @@ rockchip_stack:
 models:
   qwen3_vl_2b:
     upstream_source: "Qwen/Qwen3-VL-2B-Instruct"
+    converted_model_release: "RKLLM model zoo 1.2.3"
+    target: "rk3588"
+    board_directory: "/home/orangepi/qwen3_vl_2b_ws/models/qwen3-vl-2b/rkllm-model-zoo-1.2.3"
+    execution_authorized: false
     vision:
       artifact: "qwen3-vl-2b_vision_rk3588.rknn"
       input_size: "448x448"
-      sha256: null
-      status: "planned"
+      source: "https://console.box.lenovo.com/l/l0tXb8"
+      source_path: "1.2.3/RK3588/Qwen3-VL-2B"
+      local_path: "/home/ubt/下载/qwen3-vl-2b_vision_rk3588.rknn"
+      size_bytes: 850488413
+      sha256: "3d707ef5dbf0e420ac48e57b5bf0ed6c0fd1d5d048c29d81e1b5a8d051ab7ea8"
+      board_path: "/home/orangepi/qwen3_vl_2b_ws/models/qwen3-vl-2b/rkllm-model-zoo-1.2.3/qwen3-vl-2b_vision_rk3588.rknn"
+      board_sha256_verified: true
+      installed: true
+      status: "verified"
     language:
       artifact: "qwen3-vl-2b-instruct_w8a8_rk3588.rkllm"
       quantization: "W8A8"
       context_length: 4096
-      sha256: null
-      status: "planned"
+      source: "https://huggingface.co/JiahaoLi/Qwen3-VL-RK3588"
+      source_note: "Third-party mirror of the exact official model-zoo filename; official Filez SHA256 comparison remains pending."
+      local_path: "/home/ubt/下载/qwen3-vl-2b-instruct_w8a8_rk3588.hf.rkllm"
+      size_bytes: 2375022956
+      sha256: "d5474340221fc495c70e1ec2c7dafc4ebf88292ce466db7e771e3a20b99cf21f"
+      board_path: "/home/orangepi/qwen3_vl_2b_ws/models/qwen3-vl-2b/rkllm-model-zoo-1.2.3/qwen3-vl-2b-instruct_w8a8_rk3588.hf.rkllm"
+      board_sha256_verified: true
+      installed: true
+      status: "present_unverified"
 
 camera_stack:
   librealsense:
@@ -398,7 +416,7 @@ dependency_chain:
       - "RKLLM runtime 1.3.0"
       - "official Qwen3-VL-2B RKNN and RKLLM artifacts"
     status: "blocked"
-    blocked_by: "No verified Orange Pi 5 Pro RKNPU >=0.9.8 boot baseline"
+    blocked_by: "Language model came from a third-party mirror and model execution has not been authorized"
   - component: "realsense_capture"
     requires:
       - "D455 at 5000M"
