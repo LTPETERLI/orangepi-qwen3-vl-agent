@@ -1,0 +1,5 @@
+[11540.510048] RKNPU: switch iommu domain from 0 to 1
+[11542.709747] RKNPU: switch iommu domain from 1 to 0
+[11546.020014] RKNPU: switch iommu domain from 0 to 1
+[11568.750539] RKNPU: switch iommu domain from 1 to 0
+[11569.252562] RKNPU: switch iommu domain from 0 to 1
