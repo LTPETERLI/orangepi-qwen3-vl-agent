@@ -1,6 +1,6 @@
 schema_version: "1.0"
 project: "orangepi-qwen3-vl-agent"
-last_updated: "2026-07-20T10:47:04+08:00"
+last_updated: "2026-07-20T10:58:55+08:00"
 active_branch: "test/environment-setup"
 update_policy:
   required_on:
@@ -233,6 +233,15 @@ rockchip_stack:
       boot_artifacts: 4
       modules: 772
       verification: "SHA256"
+      status: "verified"
+    board_deployment_preparation:
+      modules_path: "/lib/modules/6.1.99-rknpu098-test1"
+      module_count: 772
+      depmod_verified: true
+      versioned_boot_files_installed: true
+      recovery_archive_sha256: "18aa73356e15fafdb7b9a3f5fb7aa41d74bea86342e3998e267ed7588d03b1d6"
+      active_boot_files_replaced: false
+      reboot_performed: false
       status: "verified"
     deployed: false
     installation_authorized: false
