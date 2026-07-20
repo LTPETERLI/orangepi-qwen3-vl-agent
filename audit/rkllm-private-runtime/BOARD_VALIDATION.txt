@@ -1,0 +1,23 @@
+demo/CMakeLists.txt: OK
+demo/README.md: OK
+demo/build-linux.sh: OK
+demo/c_export.map: OK
+demo/data/demo.jpg: OK
+demo/src/image_enc.cc: OK
+demo/src/image_enc.h: OK
+demo/src/img_encoder.cpp: OK
+demo/src/main.cpp: OK
+include/rkllm.h: OK
+include/rknn_api.h: OK
+include/rknn_custom_op.h: OK
+include/rknn_matmul_api.h: OK
+lib/librkllmrt.so: OK
+lib/librknnrt.so: OK
+metadata/GIT_COMMIT: OK
+metadata/GIT_TAG: OK
+RKLLM_RUNTIME_ROOT=/home/orangepi/qwen3_vl_2b_ws/runtime/rkllm-1.3.0
+private_environment=READY
+0ebc1b408f897863a91a1b9ed60f3838a801386c7b1ef7c54d55ead624cd8347  /usr/lib/librknnrt.so
+42c68f4cf840b4c83ecc0a956361a73ff91d90acf5f4464323bcb95d810af1eb  /usr/lib/librkllmrt.so
+6.1.99-rknpu098-test1
+RKNPU driver: v0.9.8

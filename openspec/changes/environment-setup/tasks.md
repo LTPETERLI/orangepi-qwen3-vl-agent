@@ -16,7 +16,7 @@
 ## 3. Official Multimodal Baseline
 
 - [ ] 3.1 Record official Qwen3-VL-2B RKNN/RKLLM model sources, sizes, and SHA256 hashes.
-- [ ] 3.2 Stage version-matched RKNN/RKLLM runtimes in an application-private prefix.
+- [x] 3.2 Stage version-matched RKNN/RKLLM runtimes in an application-private prefix.
 - [ ] 3.3 Obtain explicit approval to execute the official fixed-image demo.
 - [ ] 3.4 Complete 30 consecutive accepted demo runs and record stability evidence.
 
