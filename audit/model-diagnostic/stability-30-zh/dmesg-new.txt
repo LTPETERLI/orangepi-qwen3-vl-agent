@@ -1,0 +1,138 @@
+[12248.315747] RKNPU: switch iommu domain from 1 to 0
+[12251.877789] RKNPU: switch iommu domain from 0 to 1
+[12263.804356] RKNPU: switch iommu domain from 1 to 0
+[12264.298028] RKNPU: switch iommu domain from 0 to 1
+[12267.685284] RKNPU: switch iommu domain from 1 to 0
+[12270.547277] RKNPU: switch iommu domain from 0 to 1
+[12282.336856] RKNPU: switch iommu domain from 1 to 0
+[12282.761680] RKNPU: switch iommu domain from 0 to 1
+[12286.714258] RKNPU: switch iommu domain from 1 to 0
+[12289.520746] RKNPU: switch iommu domain from 0 to 1
+[12301.534006] RKNPU: switch iommu domain from 1 to 0
+[12302.030114] RKNPU: switch iommu domain from 0 to 1
+[12306.201314] RKNPU: switch iommu domain from 1 to 0
+[12309.605426] RKNPU: switch iommu domain from 0 to 1
+[12321.697340] RKNPU: switch iommu domain from 1 to 0
+[12322.195756] RKNPU: switch iommu domain from 0 to 1
+[12325.821814] RKNPU: switch iommu domain from 1 to 0
+[12328.785790] RKNPU: switch iommu domain from 0 to 1
+[12340.693277] RKNPU: switch iommu domain from 1 to 0
+[12341.189801] RKNPU: switch iommu domain from 0 to 1
+[12344.827799] RKNPU: switch iommu domain from 1 to 0
+[12347.634712] RKNPU: switch iommu domain from 0 to 1
+[12359.431282] RKNPU: switch iommu domain from 1 to 0
+[12359.856732] RKNPU: switch iommu domain from 0 to 1
+[12363.413478] RKNPU: switch iommu domain from 1 to 0
+[12366.516301] RKNPU: switch iommu domain from 0 to 1
+[12378.385056] RKNPU: switch iommu domain from 1 to 0
+[12378.811694] RKNPU: switch iommu domain from 0 to 1
+[12382.747040] RKNPU: switch iommu domain from 1 to 0
+[12385.662294] RKNPU: switch iommu domain from 0 to 1
+[12397.813243] RKNPU: switch iommu domain from 1 to 0
+[12398.307173] RKNPU: switch iommu domain from 0 to 1
+[12401.847493] RKNPU: switch iommu domain from 1 to 0
+[12404.985132] RKNPU: switch iommu domain from 0 to 1
+[12416.948350] RKNPU: switch iommu domain from 1 to 0
+[12417.376208] RKNPU: switch iommu domain from 0 to 1
+[12421.570776] RKNPU: switch iommu domain from 1 to 0
+[12424.648002] RKNPU: switch iommu domain from 0 to 1
+[12436.492096] RKNPU: switch iommu domain from 1 to 0
+[12436.917982] RKNPU: switch iommu domain from 0 to 1
+[12440.889859] RKNPU: switch iommu domain from 1 to 0
+[12444.456931] RKNPU: switch iommu domain from 0 to 1
+[12456.458569] RKNPU: switch iommu domain from 1 to 0
+[12456.956360] RKNPU: switch iommu domain from 0 to 1
+[12460.401536] RKNPU: switch iommu domain from 1 to 0
+[12463.801775] RKNPU: switch iommu domain from 0 to 1
+[12475.470565] RKNPU: switch iommu domain from 1 to 0
+[12475.969842] RKNPU: switch iommu domain from 0 to 1
+[12479.708365] RKNPU: switch iommu domain from 1 to 0
+[12482.747454] RKNPU: switch iommu domain from 0 to 1
+[12494.406907] RKNPU: switch iommu domain from 1 to 0
+[12494.903148] RKNPU: switch iommu domain from 0 to 1
+[12498.627153] RKNPU: switch iommu domain from 1 to 0
+[12501.771305] RKNPU: switch iommu domain from 0 to 1
+[12513.545493] RKNPU: switch iommu domain from 1 to 0
+[12514.043160] RKNPU: switch iommu domain from 0 to 1
+[12517.036314] RKNPU: switch iommu domain from 1 to 0
+[12519.868320] RKNPU: switch iommu domain from 0 to 1
+[12531.843039] RKNPU: switch iommu domain from 1 to 0
+[12532.340097] RKNPU: switch iommu domain from 0 to 1
+[12536.380588] RKNPU: switch iommu domain from 1 to 0
+[12539.622052] RKNPU: switch iommu domain from 0 to 1
+[12551.293697] RKNPU: switch iommu domain from 1 to 0
+[12551.721035] RKNPU: switch iommu domain from 0 to 1
+[12555.628968] RKNPU: switch iommu domain from 1 to 0
+[12559.032852] RKNPU: switch iommu domain from 0 to 1
+[12571.032727] RKNPU: switch iommu domain from 1 to 0
+[12571.460240] RKNPU: switch iommu domain from 0 to 1
+[12575.674910] RKNPU: switch iommu domain from 1 to 0
+[12578.727932] RKNPU: switch iommu domain from 0 to 1
+[12590.707096] RKNPU: switch iommu domain from 1 to 0
+[12591.137152] RKNPU: switch iommu domain from 0 to 1
+[12594.858492] RKNPU: switch iommu domain from 1 to 0
+[12597.964301] RKNPU: switch iommu domain from 0 to 1
+[12610.035320] RKNPU: switch iommu domain from 1 to 0
+[12610.463939] RKNPU: switch iommu domain from 0 to 1
+[12614.247979] RKNPU: switch iommu domain from 1 to 0
+[12617.430610] RKNPU: switch iommu domain from 0 to 1
+[12629.455849] RKNPU: switch iommu domain from 1 to 0
+[12629.883314] RKNPU: switch iommu domain from 0 to 1
+[12633.275876] RKNPU: switch iommu domain from 1 to 0
+[12636.550105] RKNPU: switch iommu domain from 0 to 1
+[12647.946431] [dhd] [wlan0] wl_iw_event : disconnected with a8:58:40:d2:98:31, event 6, reason 3
+[12647.946516] [dhd] [wlan0] wl_ext_iapsta_link : [S] Link down with a8:58:40:d2:98:31, WLC_E_DEAUTH_IND(6), reason 3
+[12647.946533] [dhd] [wlan0] wl_iw_event : [0 times] disconnected with a8:58:40:d2:98:31, event 11, reason 8
+[12647.946544] [dhd] [wlan0] wl_ext_iapsta_link : [S] Link down with a8:58:40:d2:98:31, WLC_E_DISASSOC(11), reason 8
+[12647.946551] [dhd] [wlan0] wl_iw_event : Link Down with a8:58:40:d2:98:31, reason=2
+[12647.946567] [dhd] [wlan0] wl_ext_iapsta_link : [S] Link down with a8:58:40:d2:98:31, WLC_E_LINK(16), reason 2
+[12647.946825] [dhd] [wlan0] wl_handle_link_down : Link down: WLC_E_DEAUTH_IND(6), reason 3 from a8:58:40:d2:98:31
+[12647.947025] [dhd] [wlan0] wl_handle_link_down : Disconnect event sent to upper layerevent:6 e->reason=50331648 reason=3 ie_len=0 loc_gen=0 from a8:58:40:d2:98:31
+[12647.963396] [dhd] CFG80211-ERROR) wl_notify_connect_status_sta : Unexpected event:16 in assoc idle state
+[12648.144537] [dhd] [wlan0] wl_run_escan : LEGACY_SCAN sync ID: 3, bssidx: 0
+[12648.571203] RKNPU: switch iommu domain from 1 to 0
+[12648.999477] RKNPU: switch iommu domain from 0 to 1
+[12650.514125] [dhd] [wlan0] wl_conn_debug_info : Connecting with a8:58:40:8d:0c:d1 ssid "UBT", len (3), channel=5g-52(chan_cnt=1), sec=wpa2/psk/mfpc/aes, rssi=-66
+[12651.828275] [dhd] [wlan0] wl_iw_event : Link UP with a8:58:40:8d:0c:d1
+[12651.828315] [dhd] [wlan0] wl_ext_iapsta_link : [S] Link UP with a8:58:40:8d:0c:d1
+[12651.830444] [dhd] [wlan0] wl_bss_connect_done : Report connect result - connection succeeded
+[12651.833669] [dhd] CFG80211-ERROR) wl_mkeep_alive_update : wl_mkeep_alive_update: Get mkeep_alive failed (error=-2)
+[12651.881842] [dhd] [wlan0] wl_add_keyext : key index (0) for a8:58:40:8d:0c:d1
+[12651.888523] [dhd] [wlan0] wl_cfg80211_set_suspend_bcn_li_dtim : bcn_li_dtim:0 lpas:0 bcn_to_dly:0
+[12652.445638] RKNPU: switch iommu domain from 1 to 0
+[12652.452679] [dhd] [wlan0] wl_add_keyext : key index (0) for a8:58:40:8d:0c:d1
+[12655.577445] RKNPU: switch iommu domain from 0 to 1
+[12667.409343] RKNPU: switch iommu domain from 1 to 0
+[12667.836458] RKNPU: switch iommu domain from 0 to 1
+[12671.594549] RKNPU: switch iommu domain from 1 to 0
+[12674.575378] RKNPU: switch iommu domain from 0 to 1
+[12686.518008] RKNPU: switch iommu domain from 1 to 0
+[12686.976812] RKNPU: switch iommu domain from 0 to 1
+[12690.839282] RKNPU: switch iommu domain from 1 to 0
+[12693.961358] RKNPU: switch iommu domain from 0 to 1
+[12705.857237] RKNPU: switch iommu domain from 1 to 0
+[12706.283793] RKNPU: switch iommu domain from 0 to 1
+[12710.080257] RKNPU: switch iommu domain from 1 to 0
+[12713.082690] RKNPU: switch iommu domain from 0 to 1
+[12724.994123] RKNPU: switch iommu domain from 1 to 0
+[12725.422407] RKNPU: switch iommu domain from 0 to 1
+[12729.472455] RKNPU: switch iommu domain from 1 to 0
+[12732.394959] RKNPU: switch iommu domain from 0 to 1
+[12744.075832] RKNPU: switch iommu domain from 1 to 0
+[12744.503759] RKNPU: switch iommu domain from 0 to 1
+[12748.115894] RKNPU: switch iommu domain from 1 to 0
+[12750.836097] RKNPU: switch iommu domain from 0 to 1
+[12762.732265] RKNPU: switch iommu domain from 1 to 0
+[12763.158882] RKNPU: switch iommu domain from 0 to 1
+[12766.795315] RKNPU: switch iommu domain from 1 to 0
+[12769.988950] RKNPU: switch iommu domain from 0 to 1
+[12781.886408] RKNPU: switch iommu domain from 1 to 0
+[12782.312475] RKNPU: switch iommu domain from 0 to 1
+[12786.428101] RKNPU: switch iommu domain from 1 to 0
+[12789.716688] RKNPU: switch iommu domain from 0 to 1
+[12801.645561] RKNPU: switch iommu domain from 1 to 0
+[12802.072630] RKNPU: switch iommu domain from 0 to 1
+[12805.416867] RKNPU: switch iommu domain from 1 to 0
+[12808.332911] RKNPU: switch iommu domain from 0 to 1
+[12820.034005] RKNPU: switch iommu domain from 1 to 0
+[12820.462768] RKNPU: switch iommu domain from 0 to 1

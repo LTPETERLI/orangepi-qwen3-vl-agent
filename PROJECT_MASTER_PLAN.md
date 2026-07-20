@@ -42,10 +42,10 @@
 | 板卡 | Orange Pi 5 Pro 16GB | PASS |
 | SoC | RK3588S | PASS |
 | 架构 | AArch64 | PASS |
-| 系统 | Ubuntu 20.04.6 厂商镜像 | CONDITIONAL |
-| 内核 | `5.10.160-rockchip-rk3588` | CONDITIONAL |
-| 系统介质 | 233 GiB eMMC，`/dev/mmcblk1` | PASS |
-| RKNPU | 内核内置 `0.9.6` | FAIL |
+| 系统 | Ubuntu 22.04.5，Orange Pi 1.0.6 厂商镜像 | PASS |
+| 内核 | `6.1.99-rknpu098-test1`，Orange Pi 6.1 厂商源码 | PASS |
+| 系统介质 | 233 GiB eMMC，`/dev/mmcblk0` | PASS |
+| RKNPU | 内核内置 `0.9.8` | PASS |
 | 系统 RKNN/RKLLM 库 | 存在，但版本来源未确认 | UNKNOWN |
 | 空闲存储 | 约 201 GB | PASS |
 | 空闲内存 | 审计时约 13 GiB | PASS |
@@ -114,12 +114,12 @@ Toolkit、Runtime、头文件、Demo 和模型文件格式必须来自同一 RKL
 | USB3 | D455 直连 `5000M` | PASS |
 | 启动介质 | eMMC 类型和启动状态确认 | PASS |
 | RKLLM 1.3.0 | tag、commit、文件与哈希核验 | PASS |
-| RKNPU | 当前 `0.9.6`，最终要求 `>=0.9.8` | FAIL |
+| RKNPU | 内核内置 `0.9.8`，30 次官方 Demo 无驱动故障 | PASS |
 | 厂商升级路径 | 未找到带完整版本证据的 5 Pro 官方镜像 | UNKNOWN |
 | 整盘备份 | 用户确认无重要数据，整盘备份已豁免 | WAIVED |
-| 模型运行 | 未授权、未执行 | BLOCKED |
+| 模型运行 | 官方固定图片 Demo 连续 30 次有效回答 | PASS |
 
-当前不得进入模型、驱动或相机 SDK 安装阶段。
+官方固定图片模型基线已通过。下一阶段为 D455 用户态采集基线，仍不得未经批准安装 DKMS、更新相机固件或执行主干合并。
 
 ## 5. 总体执行原则
 
