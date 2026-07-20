@@ -1,0 +1,128 @@
+=== timestamp ===
+2026-07-20T11:16:45+08:00
+=== kernel ===
+Linux orangepi5pro 6.1.99-rknpu098-test1 #1 SMP Mon Jul 20 01:18:24 CST 2026 aarch64 aarch64 aarch64 GNU/Linux
+=== uptime ===
+ 11:16:45 up 2 min,  3 users,  load average: 0.31, 0.16, 0.06
+=== boot list ===
+ 0 e813c83f4b7c448bbe2e5e349e3f183b Mon 2026-07-20 11:14:47 CST—Mon 2026-07-20 11:16:45 CST
+=== failed units ===
+  UNIT            LOAD   ACTIVE SUB    DESCRIPTION
+● dnsmasq.service loaded failed failed dnsmasq - A lightweight DHCP and caching DNS server
+
+LOAD   = Reflects whether the unit definition was properly loaded.
+ACTIVE = The high-level unit activation state, i.e. generalization of SUB.
+SUB    = The low-level unit activation state, values depend on unit type.
+1 loaded units listed.
+=== RKNPU version ===
+RKNPU driver: v0.9.8
+=== RKNPU/IOMMU faults ===
+[    0.743795] Linux version 6.1.99-rknpu098-test1 (ubt@ubt-ASUS-EXPERTBOOK-B1403CVA-P1463CVA) (aarch64-none-linux-gnu-gcc (GNU Toolchain for the Arm Architecture 11.2-2022.02 (arm-11.14)) 11.2.1 20220111, GNU ld (GNU Toolchain for the Arm Architecture 11.2-2022.02 (arm-11.14)) 2.37.20220122) #1 SMP Mon Jul 20 01:18:24 CST 2026
+[    1.989456] iommu: Default domain type: Translated 
+[    2.122641] usb usb1: Manufacturer: Linux 6.1.99-rknpu098-test1 ehci_hcd
+[    2.136158] usb usb3: Manufacturer: Linux 6.1.99-rknpu098-test1 ehci_hcd
+[    2.170020] usb usb2: Manufacturer: Linux 6.1.99-rknpu098-test1 ohci_hcd
+[    2.170850] usb usb4: Manufacturer: Linux 6.1.99-rknpu098-test1 ohci_hcd
+[    2.440476] rga: IOMMU binding successfully, default mapping core[0x1]
+[    2.471893] RKNPU fdab0000.npu: Adding to iommu group 0
+[    2.471980] RKNPU fdab0000.npu: RKNPU: rknpu iommu is enabled, using iommu mode
+[    2.473066] RKNPU fdab0000.npu: can't request region for resource [mem 0xfdab0000-0xfdabffff]
+[    2.473081] RKNPU fdab0000.npu: can't request region for resource [mem 0xfdac0000-0xfdacffff]
+[    2.473088] RKNPU fdab0000.npu: can't request region for resource [mem 0xfdad0000-0xfdadffff]
+[    2.473454] [drm] Initialized rknpu 0.9.8 20240828 for fdab0000.npu on minor 1
+[    2.479628] RKNPU fdab0000.npu: RKNPU: bin=0
+[    2.479801] RKNPU fdab0000.npu: leakage=10
+[    2.479819] debugfs: Directory 'fdab0000.npu-rknpu' with parent 'vdd_npu_s0' already present!
+[    2.488265] RKNPU fdab0000.npu: pvtm=898
+[    2.492518] RKNPU fdab0000.npu: pvtm-volt-sel=4
+[    2.492545] debugfs: Directory 'fdab0000.npu-rknpu' with parent 'vdd_npu_s0' already present!
+[    2.494014] RKNPU fdab0000.npu: avs=0
+[    2.494053] RKNPU fdab0000.npu: rockchip_pvtpll_set_volt_sel: error cfg clk_id=6 voltsel (-1)
+[    2.494095] RKNPU fdab0000.npu: l=15000 h=85000 hyst=5000 l_limit=0 h_limit=800000000 h_table=0
+[    7.829672] usb usb5: Manufacturer: Linux 6.1.99-rknpu098-test1 xhci-hcd
+[    7.829985] usb usb6: Manufacturer: Linux 6.1.99-rknpu098-test1 xhci-hcd
+=== kernel severity err+ ===
+[    0.761490] OF: fdt: Reserved memory: failed to reserve memory for node 'drm-logo@0': base 0x0000000000000000, size 0 MiB
+[    0.761504] OF: fdt: Reserved memory: failed to reserve memory for node 'drm-cubic-lut@0': base 0x0000000000000000, size 0 MiB
+[    1.988362] fiq_debugger fiq_debugger.0: error -ENXIO: IRQ fiq not found
+[    1.988368] fiq_debugger fiq_debugger.0: error -ENXIO: IRQ wakeup not found
+[    1.988373] fiq_debugger_probe: could not install nmi irq handler
+[    2.077001] rockchip-vop2 fdd90000.vop: error -ENODEV: _opp_set_regulators: no regulator (vop) found
+[    2.077017] rockchip-vop2 fdd90000.vop: failed to set opp config
+[    2.077020] rockchip-vop2 fdd90000.vop: failed to init opp info
+[    2.098343] rk806 spi2.0: no sleep-setting state
+[    2.098347] rk806 spi2.0: no reset-setting pinctrl state
+[    2.098350] rk806 spi2.0: no dvs-setting pinctrl state
+[    2.232651] Goodix-TS 7-0014: Error reading 1 bytes from 0x8140: -6
+[    2.259311] Goodix-TS 7-0014: Error reading 1 bytes from 0x8140: -6
+[    2.285846] Goodix-TS 7-0014: I2C communication failure: -6
+[    2.326117] cpu cpu0: rockchip_pvtpll_set_volt_sel: error cfg clk_id=0 voltsel (-1)
+[    2.327213] cpu cpu4: rockchip_pvtpll_set_volt_sel: error cfg clk_id=2 voltsel (-1)
+[    2.328133] cpu cpu6: rockchip_pvtpll_set_volt_sel: error cfg clk_id=3 voltsel (-1)
+[    2.356050] arm-scmi firmware:scmi: Failed. SCMI protocol 17 not active.
+[    2.365396] debugfs: File 'Capture' in directory 'dapm' already present!
+[    2.463751] mpp_rkvdec2 fdc38100.rkvdec-core: shared_niu_a is not found!
+[    2.463756] rkvdec2_init:1198: No niu aclk reset resource define
+[    2.463762] mpp_rkvdec2 fdc38100.rkvdec-core: shared_niu_h is not found!
+[    2.463765] rkvdec2_init:1201: No niu hclk reset resource define
+[    2.464717] mpp_rkvdec2 fdc48100.rkvdec-core: shared_niu_a is not found!
+[    2.464722] rkvdec2_init:1198: No niu aclk reset resource define
+[    2.464727] mpp_rkvdec2 fdc48100.rkvdec-core: shared_niu_h is not found!
+[    2.464730] rkvdec2_init:1201: No niu hclk reset resource define
+[    2.465584] mpp_rkvenc2 fdbd0000.rkvenc-core: rockchip_init_read_margin: no regulator (venc) found: -19
+[    2.465855] mpp_rkvenc2 fdbd0000.rkvenc-core: error -ENODEV: _opp_set_regulators: no regulator (venc) found
+[    2.465881] mpp_rkvenc2 fdbd0000.rkvenc-core: failed to set opp config
+[    2.465885] mpp_rkvenc2 fdbd0000.rkvenc-core: failed to init opp info
+[    2.465890] mpp_rkvenc2 fdbd0000.rkvenc-core: failed to init_opp_table
+[    2.465893] rkvenc_init:2147: failed to add venc devfreq
+[    2.466436] mpp_rkvenc2 fdbe0000.rkvenc-core: rockchip_init_read_margin: no regulator (venc) found: -19
+[    2.466653] mpp_rkvenc2 fdbe0000.rkvenc-core: error -ENODEV: _opp_set_regulators: no regulator (venc) found
+[    2.466667] mpp_rkvenc2 fdbe0000.rkvenc-core: failed to set opp config
+[    2.466671] mpp_rkvenc2 fdbe0000.rkvenc-core: failed to init opp info
+[    2.466674] mpp_rkvenc2 fdbe0000.rkvenc-core: failed to init_opp_table
+[    2.466678] rkvenc_init:2147: failed to add venc devfreq
+[    2.469012] debugfs: Directory 'fb000000.gpu-mali' with parent 'vdd_gpu_s0' already present!
+[    2.469940] rockchip-dmc dmc: failed to get vop bandwidth to dmc rate
+[    2.469944] rockchip-dmc dmc: failed to get vop pn to msch rl
+[    2.470499] debugfs: Directory 'fb000000.gpu-mali' with parent 'vdd_gpu_s0' already present!
+[    2.471721] mali fb000000.gpu: rockchip_pvtpll_set_volt_sel: error cfg clk_id=5 voltsel (-1)
+[    2.473066] RKNPU fdab0000.npu: can't request region for resource [mem 0xfdab0000-0xfdabffff]
+[    2.473081] RKNPU fdab0000.npu: can't request region for resource [mem 0xfdac0000-0xfdacffff]
+[    2.473088] RKNPU fdab0000.npu: can't request region for resource [mem 0xfdad0000-0xfdadffff]
+[    2.479819] debugfs: Directory 'fdab0000.npu-rknpu' with parent 'vdd_npu_s0' already present!
+[    2.492545] debugfs: Directory 'fdab0000.npu-rknpu' with parent 'vdd_npu_s0' already present!
+[    2.494053] RKNPU fdab0000.npu: rockchip_pvtpll_set_volt_sel: error cfg clk_id=6 voltsel (-1)
+[    4.347140] rk-pcie fe180000.pcie: PCIe Link Fail, LTSSM is 0x3, hw_retries=0
+[    5.532718] [dhd] _dhd_module_init: in Dongle Host Driver, version 101.10.591.52.27 (20240409-1)(20240411-2)(d83d8d7)
+               drivers/net/wireless/rockchip_wlan/rkwifi/bcmdhd compiled on Jul 20 2026 at 01:15:54
+
+[    5.532726] [dhd] STATIC-MSG) dhd_static_buf_init : 101.10.361.36 (wlan=r892223-20231107-1)
+[    5.532739] [dhd] STATIC-MSG) dhd_init_wlan_mem : prealloc ok for index 0: 1102848(1077K)
+[    5.865760] [dhd] STATIC-MSG) dhd_wlan_mem_prealloc : section 3, size 139264
+[    5.865785] [dhd] STATIC-MSG) dhd_wlan_mem_prealloc : section 4, size 0
+[    5.869927] [dhd] STATIC-MSG) dhd_wlan_mem_prealloc : section 7, size 42288
+[    5.869995] [dhd] STATIC-MSG) dhd_wlan_mem_prealloc : section 0, size 10320
+[    5.870285] [dhd] STATIC-MSG) dhd_wlan_mem_prealloc : section 5, size 65536
+[    5.870723] [dhd] STATIC-MSG) dhd_wlan_mem_prealloc : section 19, size 65688
+[    5.877877] [dhd] STATIC-MSG) dhd_wlan_mem_prealloc : section 1, size 10300
+[    5.877886] [dhd] STATIC-MSG) dhd_wlan_mem_prealloc : section 2, size 65536
+[    7.650208] rk-pcie fe180000.pcie: PCIe Link Fail, LTSSM is 0x3, hw_retries=1
+[    7.724668] dwc3 fc000000.usb: request ffffff810710d100 was not queued to ep0out
+[    7.933546] of_dma_request_slave_channel: dma-names property of node '/serial@febc0000' missing or empty
+[    8.665897] rk-pcie fe180000.pcie: failed to initialize host
+[   10.795855] dma-pl330 fea30000.dma-controller: fill_queue:2267 Bad Desc(2)
+=== network ===
+GENERAL.STATE:100 (connected)
+GENERAL.CONNECTION:UBT
+IP4.ADDRESS[1]:10.10.24.218/24
+=== mounts ===
+TARGET SOURCE         FSTYPE OPTIONS
+/      /dev/mmcblk0p2 ext4   rw,noatime,errors=remount-ro,commit=600
+TARGET SOURCE         FSTYPE OPTIONS
+/boot  /dev/mmcblk0p1 vfat   rw,relatime,fmask=0022,dmask=0022,codepage=936,iocharset=utf8,shortname=mixed,errors=remount-ro
+=== modules ===
+772
+=== memory ===
+               total        used        free      shared  buff/cache   available
+Mem:            15Gi       524Mi        14Gi        12Mi       509Mi        14Gi
+Swap:          7.8Gi          0B       7.8Gi

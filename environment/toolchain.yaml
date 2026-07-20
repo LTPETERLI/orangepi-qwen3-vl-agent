@@ -1,6 +1,6 @@
 schema_version: "1.0"
 project: "orangepi-qwen3-vl-agent"
-last_updated: "2026-07-20T10:58:55+08:00"
+last_updated: "2026-07-20T11:16:45+08:00"
 active_branch: "test/environment-setup"
 update_policy:
   required_on:
@@ -128,8 +128,8 @@ hosts:
         vendor_build: "1.0.6"
         status: "verified"
       kernel:
-        version: "6.1.43-rockchip-rk3588"
-        build: "#1.0.6 SMP Wed Nov 13 00:19:29 CST 2024"
+        version: "6.1.99-rknpu098-test1"
+        build: "#1 SMP Mon Jul 20 01:18:24 CST 2026"
         status: "verified"
       python:
         version: "3.10.12"
@@ -139,11 +139,12 @@ hosts:
         installed: false
         status: "verified"
       rknpu:
-        version: "0.9.6"
+        version: "0.9.8"
         linkage: "built-in"
         kernel_config: "CONFIG_ROCKCHIP_RKNPU=y"
-        acceptance: "fail"
-        status: "blocked"
+        acceptance: "pending runtime and stability validation"
+        model_execution_authorized: false
+        status: "verified"
       boot_media:
         device: "/dev/mmcblk0"
         type: "eMMC"
@@ -240,11 +241,28 @@ rockchip_stack:
       depmod_verified: true
       versioned_boot_files_installed: true
       recovery_archive_sha256: "18aa73356e15fafdb7b9a3f5fb7aa41d74bea86342e3998e267ed7588d03b1d6"
-      active_boot_files_replaced: false
-      reboot_performed: false
+      active_boot_files_replaced: true
+      reboot_performed: true
       status: "verified"
-    deployed: false
-    installation_authorized: false
+    post_boot_validation:
+      ssh_reconnected: true
+      wifi_connection: "UBT"
+      wifi_address: "10.10.24.218/24"
+      root_device: "/dev/mmcblk0p2"
+      boot_device: "/dev/mmcblk0p1"
+      installed_module_count: 772
+      rknpu_reported_version: "0.9.8"
+      iommu_fault_observed: false
+      failed_units:
+        - "dnsmasq.service: port 53 already in use"
+      unresolved_kernel_warnings:
+        - "RKNPU MMIO request-region warnings followed by successful DRM initialization"
+        - "RKNPU/GPU/CPU PVTPLL voltage-selection warnings"
+        - "VOP and video encoder OPP regulator warnings"
+        - "Unused PCIe host link failure"
+      status: "verified"
+    deployed: true
+    installation_authorized: true
     status: "verified"
   rknn_llm_repository:
     source: "https://github.com/airockchip/rknn-llm.git"
