@@ -20,6 +20,12 @@ The laptop and board sizes and SHA256 values matched exactly after SCP. The
 language model remains `present_unverified` because byte identity with the
 official Rockchip Filez artifact has not yet been established.
 
+The retained official Filez partial download contains 862830136 bytes. A
+byte-for-byte `cmp` against the beginning of the complete Hugging Face mirror
+file returned success. This strongly supports that the mirror contains the
+same artifact, but it does not establish the identity of the unobserved suffix
+or replace a full official SHA256 comparison.
+
 ## Safety State
 
 - No model binary was opened by RKNN or RKLLM Runtime.

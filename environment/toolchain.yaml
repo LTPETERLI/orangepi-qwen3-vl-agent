@@ -335,7 +335,9 @@ models:
       quantization: "W8A8"
       context_length: 4096
       source: "https://huggingface.co/JiahaoLi/Qwen3-VL-RK3588"
-      source_note: "Third-party mirror of the exact official model-zoo filename; official Filez SHA256 comparison remains pending."
+      source_note: "Third-party mirror of the exact official model-zoo filename. Its first 862830136 bytes matched the retained official Filez partial download byte-for-byte; full official SHA256 comparison remains pending."
+      official_filez_prefix_bytes_verified: 862830136
+      official_filez_prefix_comparison: "identical"
       local_path: "/home/ubt/下载/qwen3-vl-2b-instruct_w8a8_rk3588.hf.rkllm"
       size_bytes: 2375022956
       sha256: "d5474340221fc495c70e1ec2c7dafc4ebf88292ce466db7e771e3a20b99cf21f"
