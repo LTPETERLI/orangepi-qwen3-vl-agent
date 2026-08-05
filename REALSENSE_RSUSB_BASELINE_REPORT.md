@@ -78,5 +78,11 @@ not prevent RSUSB capture.
 
 ## Remaining Gate
 
-The 30-minute continuous capture and physical unplug/replug endurance checks
-remain pending. This report does not claim that endurance gate is complete.
+The user shortened the continuous capture test due to a 22:10 time limit. It
+ran for 451 seconds before a user-requested termination. The full 30-minute and
+physical unplug/replug checks are therefore waived for this session rather than
+claimed as complete.
+
+A subsequent aligned keyframe capture succeeded at 22:08:46. The RGB PPM has
+SHA256 `96e665dfb38ca079c5e5143b338f20942472d7b601237d3511ed84060d0ee4d3`
+and its aligned center depth was `1.173 m`.

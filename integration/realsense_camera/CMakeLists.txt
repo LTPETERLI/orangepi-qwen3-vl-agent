@@ -18,3 +18,11 @@ set_target_properties(realsense-camera-check PROPERTIES
   BUILD_RPATH "${REALSENSE_PREFIX}/lib"
   INSTALL_RPATH "$ORIGIN/../runtime/librealsense-2.56.5-rsusb/lib"
 )
+
+add_executable(realsense-keyframe keyframe.cpp)
+target_compile_options(realsense-keyframe PRIVATE -Wall -Wextra -Wpedantic)
+target_link_libraries(realsense-keyframe PRIVATE realsense2::realsense2)
+set_target_properties(realsense-keyframe PROPERTIES
+  BUILD_RPATH "${REALSENSE_PREFIX}/lib"
+  INSTALL_RPATH "$ORIGIN/../runtime/librealsense-2.56.5-rsusb/lib"
+)

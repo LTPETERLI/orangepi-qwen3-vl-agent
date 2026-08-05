@@ -490,8 +490,22 @@ camera_stack:
       timestamp_regressions: 0
       valid_center_depth_frames: 30
       status: "verified"
-    endurance_30_minutes: "planned"
+    endurance_30_minutes: "waived by user on 2026-08-05 due to time limit"
+    partial_endurance:
+      duration_seconds: 451
+      termination: "user-requested stop"
+      status: "verified"
     report: "REALSENSE_RSUSB_BASELINE_REPORT.md"
+    status: "verified"
+  camera_vlm_keyframe:
+    launcher: "/home/orangepi/qwen3_vl_2b_ws/bin/camera-vlm"
+    keyframe_executable: "/home/orangepi/qwen3_vl_2b_ws/app/realsense-keyframe"
+    keyframe_executable_sha256: "e4da87c155031364a41dbcbc3fae2070a372a60f36a64e88f3711c63b827ad97"
+    capture_path: "/home/orangepi/qwen3_vl_2b_ws/logs/camera-vlm/20260805T220846/keyframe.ppm"
+    keyframe_sha256: "96e665dfb38ca079c5e5143b338f20942472d7b601237d3511ed84060d0ee4d3"
+    center_depth_m: 1.173
+    rgb_depth_aligned: true
+    model_execution_performed: false
     status: "verified"
   v4l2:
     video_nodes: "/dev/video0 through /dev/video5"
