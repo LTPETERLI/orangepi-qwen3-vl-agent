@@ -21,6 +21,7 @@ audit/kernel-deployment/**/*.tar.gz
 *.pt
 *.pth
 models/
+artifacts/models/
 
 # Build products
 build/

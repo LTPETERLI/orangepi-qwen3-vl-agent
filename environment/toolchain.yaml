@@ -562,6 +562,62 @@ camera_stack:
     local_question_execution: "user-triggered by Send button"
     report: "CAMERA_VLM_GUI_REPORT.md"
     status: "verified"
+  offline_speech:
+    interaction: "hold-to-record, offline ASR, automatic prompt submission, offline TTS"
+    half_duplex: true
+    network_required_at_runtime: false
+    audio_capture:
+      backend: "ALSA"
+      device: "hw:2,0"
+      format: "S16_LE stereo 16000 Hz"
+      mono_conversion: "ffmpeg pcm_s16le 16000 Hz"
+      capture_probe: "verified"
+    audio_playback:
+      backend: "PulseAudio"
+      command: "paplay"
+      default_sink: "bluez_sink.95_61_74_9B_F6_77.a2dp_sink"
+      device: "Round-X09 (95:61:74:9B:F6:77)"
+      bluetooth_profile: "A2DP sink"
+      paired: true
+      trusted: true
+      connected: true
+      volume: "70%"
+      playback_probe: "verified"
+    asr:
+      implementation: "ggml-org/whisper.cpp"
+      version: "1.9.2"
+      commit: "306c88f4d1286aec1bf96e544632897886af5501"
+      source: "https://github.com/ggml-org/whisper.cpp"
+      build: "native ARM64 Release build with CPU backend"
+      executable: "/home/orangepi/qwen3_vl_2b_ws/build/whisper.cpp-v1.9.2/bin/whisper-cli"
+      model: "ggml-base.bin multilingual"
+      model_size_bytes: 147951465
+      model_sha256: "60ed5bc3dd14eea856493d334349b405782ddcaf0028d4b5df4088345fba2efe"
+      language: "zh"
+      spoken_validation: "recognized live microphone input and wrote transcript.txt"
+      status: "verified"
+    tts:
+      implementation: "OHF-Voice/piper1-gpl"
+      version: "1.6.0"
+      runtime: "/home/orangepi/qwen3_vl_2b_ws/runtime/piper-1.6.0"
+      installation: "application-private Python 3.10 venv from offline ARM64 wheels"
+      model: "zh_CN-huayan-medium"
+      model_size_bytes: 63201294
+      model_sha256: "9929917bf8cabb26fd528ea44d3a6699c11e87317a14765312420be230be0f3d"
+      config_sha256: "d521dc45504a8ccc99e325822b35946dd701840bfb07e3dbb31a40929ed6a82b"
+      model_card_sha256: "25d7d8f7a03e9382e629c5c4f074176e7ca84e08be12a873022e91fcac98c2c7"
+      voice_dataset_license: "UNKNOWN"
+      license_note: "Allowed for local prototype validation only; resolve voice dataset licensing before distribution."
+      status: "verified"
+    system_dependency_change:
+      installed: ["python3.10-venv", "python3-pip-whl", "python3-setuptools-whl"]
+      python_packages_upgraded: "Ubuntu 22.04 Python 3.10 packages from 3.10.12-1~22.04.6 to 3.10.12-1~22.04.16"
+    gui_integration: "/home/orangepi/qwen3_vl_2b_ws/app/camera_vlm_gui.py"
+    validation:
+      microphone_to_transcript: "verified"
+      synthesized_audio_to_round_x09: "verified by user"
+      qwen_voice_round_trip: "pending user question"
+    status: "installed_pending_qwen_voice_round_trip"
   v4l2:
     video_nodes: "/dev/video0 through /dev/video5"
     status: "verified"

@@ -3,6 +3,7 @@ import datetime
 import os
 import pathlib
 import pty
+import re
 import signal
 import subprocess
 import threading
@@ -25,6 +26,11 @@ DEMO = WORKSPACE / "vendor-src/rknn-llm-878f936/examples/multimodal_model_demo/d
 MODEL_DIR = WORKSPACE / "models/qwen3-vl-2b/rkllm-model-zoo-1.2.3"
 VISION_MODEL = MODEL_DIR / "qwen3-vl-2b_vision_rk3588.rknn"
 LANGUAGE_MODEL = MODEL_DIR / "qwen3-vl-2b-instruct_w8a8_rk3588.hf.rkllm"
+WHISPER_BUILD = WORKSPACE / "build/whisper.cpp-v1.9.2/bin"
+WHISPER_CLI = WHISPER_BUILD / "whisper-cli"
+WHISPER_MODEL = WORKSPACE / "models/speech/ggml-base.bin"
+PIPER_PYTHON = WORKSPACE / "runtime/piper-1.6.0/bin/python"
+PIPER_MODEL = WORKSPACE / "models/speech/zh_CN-huayan-medium.onnx"
 
 
 class CameraVlmWindow(Gtk.Window):
@@ -40,6 +46,11 @@ class CameraVlmWindow(Gtk.Window):
         self.preview_process = None
         self.last_frame = None
         self.preview_generation = 0
+        self.record_process = None
+        self.record_run_dir = None
+        self.pending_voice_response = False
+        self.model_response_buffer = ""
+        self.tts_process = None
 
         root = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=10)
         self.add(root)
@@ -100,15 +111,23 @@ class CameraVlmWindow(Gtk.Window):
         output_frame.add(output_scroll)
         chat_box.pack_start(output_frame, True, True, 0)
 
-        question_row = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=8)
-        self.question = Gtk.Entry()
-        self.question.set_placeholder_text("输入关于当前画面的问题")
-        self.question.connect("activate", self.on_send)
-        question_row.pack_start(self.question, True, True, 0)
-        self.send_button = Gtk.Button.new_with_label("发送")
-        self.send_button.connect("clicked", self.on_send)
-        question_row.pack_start(self.send_button, False, False, 0)
-        chat_box.pack_start(question_row, False, False, 0)
+        voice_frame = Gtk.Frame(label="离线语音问答")
+        voice_box = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=8)
+        voice_box.set_margin_start(8)
+        voice_box.set_margin_end(8)
+        voice_box.set_margin_top(8)
+        voice_box.set_margin_bottom(8)
+        self.transcript_label = Gtk.Label(label="识别问题：等待说话")
+        self.transcript_label.set_xalign(0)
+        self.transcript_label.set_line_wrap(True)
+        voice_box.pack_start(self.transcript_label, False, False, 0)
+        self.voice_button = Gtk.Button.new_with_label("按住说话")
+        self.voice_button.set_size_request(-1, 64)
+        self.voice_button.connect("pressed", self.on_voice_pressed)
+        self.voice_button.connect("released", self.on_voice_released)
+        voice_box.pack_start(self.voice_button, False, False, 0)
+        voice_frame.add(voice_box)
+        chat_box.pack_start(voice_frame, False, False, 0)
         paned.pack2(chat_box, resize=True, shrink=False)
         paned.set_position(1110)
 
@@ -148,7 +167,7 @@ class CameraVlmWindow(Gtk.Window):
             self.capture_failed(str(error))
             return False
         self.capture_button.set_sensitive(False)
-        self.send_button.set_sensitive(False)
+        self.voice_button.set_sensitive(False)
         self.set_status("正在启动 640x480@15 实时画面...")
         threading.Thread(target=self.preview_reader, args=(generation,), daemon=True).start()
         threading.Thread(target=self.preview_status_reader, args=(generation,), daemon=True).start()
@@ -228,13 +247,13 @@ class CameraVlmWindow(Gtk.Window):
             depth_pixbuf.scale_simple(520, 390, GdkPixbuf.InterpType.BILINEAR)
         )
         self.capture_button.set_sensitive(False)
-        self.send_button.set_sensitive(True)
+        self.voice_button.set_sensitive(True)
         self.set_status("实时画面 640x480@15")
         return False
 
     def start_capture(self):
         self.capture_button.set_sensitive(False)
-        self.send_button.set_sensitive(False)
+        self.voice_button.set_sensitive(False)
         self.set_status("正在采集 RGB-D 关键帧...")
         threading.Thread(target=self.capture_worker, daemon=True).start()
         return False
@@ -269,7 +288,7 @@ class CameraVlmWindow(Gtk.Window):
         self.image.set_from_pixbuf(pixbuf)
         self.detection_label.set_text("静态关键帧已采集；恢复实时画面后继续逐目标测距")
         self.capture_button.set_sensitive(True)
-        self.send_button.set_sensitive(True)
+        self.voice_button.set_sensitive(True)
         self.set_status("画面已更新，可以提问")
         return False
 
@@ -322,20 +341,166 @@ class CameraVlmWindow(Gtk.Window):
                 chunk = os.read(self.model_pty, 4096)
                 if not chunk:
                     break
-                GLib.idle_add(self.append_output, chunk.decode("utf-8", errors="replace"))
+                decoded = chunk.decode("utf-8", errors="replace")
+                GLib.idle_add(self.append_output, decoded)
+                self.model_response_buffer += decoded
+                if len(self.model_response_buffer) > 131072:
+                    self.model_response_buffer = self.model_response_buffer[-131072:]
+                if self.pending_voice_response:
+                    plain = re.sub(r"\x1b\[[0-9;?]*[ -/]*[@-~]", "", self.model_response_buffer)
+                    match = re.search(r"robot:\s*(.*?)\r?\nI rkllm:", plain, re.DOTALL)
+                    if match:
+                        self.pending_voice_response = False
+                        answer = match.group(1).strip()
+                        if answer:
+                            threading.Thread(target=self.speak_worker, args=(answer,), daemon=True).start()
         except OSError:
             pass
         finally:
             GLib.idle_add(self.model_stopped)
 
-    def on_send(self, _widget):
-        prompt = self.question.get_text().strip()
+    def submit_prompt(self, prompt):
         if not prompt or not self.ensure_model():
             return
-        self.question.set_text("")
+        self.voice_button.set_sensitive(False)
+        self.pending_voice_response = True
+        self.model_response_buffer = ""
         full_prompt = "<image>" + prompt
         os.write(self.model_pty, (full_prompt + "\n").encode("utf-8"))
         self.append_output(f"\n你：{prompt}\n")
+
+    def on_voice_pressed(self, _button):
+        if self.record_process or (self.tts_process and self.tts_process.poll() is None):
+            return
+        required = [WHISPER_CLI, WHISPER_MODEL, PIPER_PYTHON, PIPER_MODEL]
+        missing = [str(path) for path in required if not path.is_file()]
+        if missing:
+            self.append_output("\n[Missing speech files]\n" + "\n".join(missing) + "\n")
+            self.set_status("语音组件不完整")
+            return
+        run_id = datetime.datetime.now().strftime("%Y%m%dT%H%M%S%f")
+        self.record_run_dir = WORKSPACE / "logs/voice" / run_id
+        self.record_run_dir.mkdir(parents=True, exist_ok=True)
+        raw_path = self.record_run_dir / "recording-stereo.wav"
+        try:
+            self.record_process = subprocess.Popen(
+                [
+                    "arecord", "-q", "-D", "hw:2,0", "-f", "S16_LE",
+                    "-r", "16000", "-c", "2", "-t", "wav", str(raw_path),
+                ],
+                start_new_session=True,
+            )
+        except Exception as error:
+            self.record_process = None
+            self.append_output(f"\n[Audio capture error] {error}\n")
+            self.set_status("麦克风启动失败")
+            return
+        self.voice_button.set_label("松开后识别")
+        self.transcript_label.set_text("识别问题：正在录音...")
+        self.set_status("正在录音")
+
+    def on_voice_released(self, _button):
+        process = self.record_process
+        if not process:
+            return
+        self.record_process = None
+        try:
+            os.killpg(process.pid, signal.SIGINT)
+            process.wait(timeout=3)
+        except Exception:
+            process.kill()
+        self.voice_button.set_label("按住说话")
+        self.voice_button.set_sensitive(False)
+        self.set_status("正在离线识别语音...")
+        threading.Thread(target=self.transcribe_worker, daemon=True).start()
+
+    def transcribe_worker(self):
+        raw_path = self.record_run_dir / "recording-stereo.wav"
+        speech_path = self.record_run_dir / "recording.wav"
+        output_base = self.record_run_dir / "transcript"
+        whisper_env = os.environ.copy()
+        whisper_env["LD_LIBRARY_PATH"] = str(WHISPER_BUILD)
+        try:
+            subprocess.run(
+                [
+                    "ffmpeg", "-y", "-loglevel", "error", "-i", str(raw_path),
+                    "-ac", "1", "-ar", "16000", "-c:a", "pcm_s16le", str(speech_path),
+                ],
+                check=True,
+                timeout=20,
+            )
+            subprocess.run(
+                [
+                    str(WHISPER_CLI), "-m", str(WHISPER_MODEL), "-f", str(speech_path),
+                    "-l", "zh", "-t", "4", "-nt", "-np", "-otxt", "-of", str(output_base),
+                ],
+                env=whisper_env,
+                check=True,
+                timeout=180,
+            )
+            transcript = (output_base.with_suffix(".txt")).read_text(
+                encoding="utf-8", errors="replace"
+            ).strip()
+            transcript = re.sub(r"\[[^]]*\]", "", transcript).strip()
+            GLib.idle_add(self.transcription_complete, transcript)
+        except Exception as error:
+            GLib.idle_add(self.speech_failed, "语音识别失败", str(error))
+
+    def transcription_complete(self, transcript):
+        self.voice_button.set_sensitive(True)
+        if not transcript:
+            self.transcript_label.set_text("识别问题：没有听清，请重试")
+            self.set_status("没有识别到语音")
+            return False
+        self.transcript_label.set_text(f"识别问题：{transcript}")
+        self.set_status("语音已识别，正在提交问题")
+        self.submit_prompt(transcript)
+        return False
+
+    def speak_worker(self, answer):
+        speech_text = re.sub(r"[`*_#>|]", "", answer)
+        speech_text = re.sub(r"\s+", " ", speech_text).strip()[:1000]
+        run_dir = self.record_run_dir or (WORKSPACE / "logs/voice")
+        output_path = run_dir / "answer.wav"
+        GLib.idle_add(self.speech_started)
+        try:
+            result = subprocess.run(
+                [
+                    str(PIPER_PYTHON), "-m", "piper", "-m", str(PIPER_MODEL),
+                    "-f", str(output_path),
+                ],
+                input=speech_text + "\n",
+                text=True,
+                capture_output=True,
+                check=True,
+                timeout=180,
+            )
+            self.tts_process = subprocess.Popen(
+                ["paplay", str(output_path)]
+            )
+            self.tts_process.wait(timeout=180)
+            self.tts_process = None
+            GLib.idle_add(self.speech_complete)
+        except Exception as error:
+            self.tts_process = None
+            detail = getattr(error, "stderr", "") or str(error)
+            GLib.idle_add(self.speech_failed, "语音播报失败", detail)
+
+    def speech_started(self):
+        self.voice_button.set_sensitive(False)
+        self.set_status("正在播报回答...")
+        return False
+
+    def speech_complete(self):
+        self.voice_button.set_sensitive(True)
+        self.set_status("回答播报完成，可以继续说话")
+        return False
+
+    def speech_failed(self, title, detail):
+        self.voice_button.set_sensitive(True)
+        self.set_status(title)
+        self.append_output(f"\n[{title}] {detail}\n")
+        return False
 
     def on_clear(self, _button):
         if self.model_process and self.model_process.poll() is None:
@@ -360,6 +525,10 @@ class CameraVlmWindow(Gtk.Window):
         return False
 
     def on_destroy(self, _widget):
+        if self.record_process and self.record_process.poll() is None:
+            self.record_process.kill()
+        if self.tts_process and self.tts_process.poll() is None:
+            self.tts_process.kill()
         self.stop_preview()
         self.stop_model()
         Gtk.main_quit()
