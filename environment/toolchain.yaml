@@ -1,6 +1,6 @@
 schema_version: "1.0"
 project: "orangepi-qwen3-vl-agent"
-last_updated: "2026-07-20T15:05:00+08:00"
+last_updated: "2026-08-05T23:10:00+08:00"
 active_branch: "test/environment-setup"
 update_policy:
   required_on:
@@ -336,9 +336,17 @@ rockchip_stack:
     status: "verified"
   rknn_toolkit2:
     required_version: ">=2.3.2"
-    selected_version: null
-    installed: false
-    status: "planned"
+    selected_version: "2.3.2"
+    installation: "project-private .tools/venvs/rknn-toolkit2-2.3.2"
+    python: "3.10"
+    torch: "2.4.0+cpu"
+    numpy: "1.26.4"
+    opencv_python: "4.11.0.86"
+    onnx: "1.17.0"
+    onnxruntime: "1.23.2"
+    pip_check: "PASS"
+    installed: true
+    status: "verified"
   rknn_runtime:
     selected_version: "bundled with rknn-llm release-v1.3.0"
     target: "linux-aarch64"
@@ -350,6 +358,29 @@ rockchip_stack:
     status: "verified"
 
 models:
+  yolov8n_object_detector:
+    source: "Rockchip official rknn_model_zoo v2.3.2"
+    source_repository: "https://github.com/airockchip/rknn_model_zoo"
+    source_commit: "bad6c7334531becaf90a561988519b7bec34d0ab"
+    target: "rk3588"
+    classes: "COCO 80"
+    input_size: "640x640"
+    quantization: "INT8"
+    onnx:
+      artifact: "yolov8n.onnx"
+      source: "Rockchip official optimized YOLOv8n download"
+      size_bytes: 12650184
+      sha256: "0c8716701f471067932b797eeb67c8e5db47c693c2557c881d7679ec12e21bc5"
+      status: "verified"
+    rknn:
+      artifact: "yolov8n-rk3588-i8.rknn"
+      size_bytes: 4327755
+      sha256: "f3d9bb42f22ce9e93faf5c401378ce33d7b3b2d5d2c8524c13f814c5283bb137"
+      board_path: "/home/orangepi/qwen3_vl_2b_ws/models/yolov8n-rknn-model-zoo-2.3.2/yolov8n-rk3588-i8.rknn"
+      board_sha256_verified: true
+      model_execution_authorized: true
+      validation: "PASS: live D455 frame detected bottle at 47% confidence and 3.71 m"
+      status: "verified"
   qwen3_vl_2b:
     upstream_source: "Qwen/Qwen3-VL-2B-Instruct"
     converted_model_release: "RKLLM model zoo 1.2.3"
@@ -511,17 +542,22 @@ camera_stack:
     toolkit: "GTK 3.24 via system PyGObject"
     python: "3.10.12"
     application: "/home/orangepi/qwen3_vl_2b_ws/app/camera_vlm_gui.py"
-    application_sha256: "c3f1321f97c2e8e22f7bb42c37127bc48a1491d78e3513a3f5ff9b6faac5587d"
+    application_sha256: "3a1801e36f4aca31cc315d6b51b3b5f3053fb110e2da51188687be2bce3482aa"
     preview_executable: "/home/orangepi/qwen3_vl_2b_ws/app/realsense-preview"
-    preview_executable_sha256: "803342dde3a2ee1e4cc3b141ead9778b1f6d050fab4cb063ade5ac1093ac1fb3"
-    preview_stream: "RGB, aligned colorized depth, and RGB-textured XYZ point cloud at 640x480@15"
-    point_cloud_view: "fixed oblique projection; interactive rotation not implemented"
+    preview_executable_sha256: "1d458093e34ded315caa9fd4a037eaa87dba7c7824a3179fc8058963d862ea1c"
+    preview_stream: "YOLOv8-annotated RGB and aligned colorized depth at 640x480@15"
+    object_distance_method: "median of valid aligned-depth samples in the central 60% of each detection box"
+    object_detection_ui: "numbered RGB boxes plus bottom-left class, confidence, and per-object distance list"
+    object_detection_execution: "user-authorized; live NPU validation passed"
     launcher: "/home/orangepi/qwen3_vl_2b_ws/bin/camera-vlm-gui"
     launcher_sha256: "76bc616f6fc2275f2aa2c61a29b069fd541aea9bb575f3ad2dbb3d9cae6f6292"
     desktop_entry: "/home/orangepi/Desktop/OrangePi-Qwen3-VL.desktop"
     display: ":0"
     launch_verified: true
     live_preview_verified: true
+    object_detection_verified: true
+    validation_observation: "RGB box #1, bottle, 47% confidence, 3.71 m"
+    validation_screenshot: "/tmp/camera-vlm-yolo.png on the development laptop (ephemeral evidence)"
     model_execution_on_launch: false
     local_question_execution: "user-triggered by Send button"
     report: "CAMERA_VLM_GUI_REPORT.md"

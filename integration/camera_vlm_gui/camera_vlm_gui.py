@@ -19,6 +19,8 @@ REALSENSE_PREFIX = WORKSPACE / "runtime/librealsense-2.56.5-rsusb"
 RKLLM_PREFIX = WORKSPACE / "runtime/rkllm-1.3.0"
 KEYFRAME_APP = WORKSPACE / "app/realsense-keyframe"
 PREVIEW_APP = WORKSPACE / "app/realsense-preview"
+DETECTOR_MODEL = WORKSPACE / "models/yolov8n-rknn-model-zoo-2.3.2/yolov8n-rk3588-i8.rknn"
+DETECTOR_LABELS = WORKSPACE / "models/yolov8n-rknn-model-zoo-2.3.2/coco_80_labels_list.txt"
 DEMO = WORKSPACE / "vendor-src/rknn-llm-878f936/examples/multimodal_model_demo/deploy/install/demo_Linux_aarch64/demo"
 MODEL_DIR = WORKSPACE / "models/qwen3-vl-2b/rkllm-model-zoo-1.2.3"
 VISION_MODEL = MODEL_DIR / "qwen3-vl-2b_vision_rk3588.rknn"
@@ -68,19 +70,24 @@ class CameraVlmWindow(Gtk.Window):
         camera_grid = Gtk.Grid(column_spacing=8, row_spacing=6)
         self.image = Gtk.Image()
         self.depth_image = Gtk.Image()
-        self.point_cloud_image = Gtk.Image()
-        rgb_frame = Gtk.Frame(label="RGB 实时画面")
+        rgb_frame = Gtk.Frame(label="RGB 物品检测与逐目标测距")
         rgb_frame.add(self.image)
         depth_frame = Gtk.Frame(label="对齐深度图")
         depth_frame.add(self.depth_image)
-        point_cloud_frame = Gtk.Frame(label="原始 XYZ 点云（固定视角）")
-        point_cloud_frame.add(self.point_cloud_image)
         camera_grid.attach(rgb_frame, 0, 0, 1, 1)
         camera_grid.attach(depth_frame, 1, 0, 1, 1)
-        camera_grid.attach(point_cloud_frame, 2, 0, 1, 1)
         image_box.pack_start(camera_grid, True, True, 0)
-        self.depth_label = Gtk.Label(label="中心距离：尚未采集")
-        image_box.pack_start(self.depth_label, False, False, 0)
+        detection_frame = Gtk.Frame(label="物品识别结果与距离")
+        self.detection_label = Gtk.Label(label="正在等待检测结果...")
+        self.detection_label.set_xalign(0)
+        self.detection_label.set_yalign(0)
+        self.detection_label.set_line_wrap(True)
+        self.detection_label.set_margin_start(10)
+        self.detection_label.set_margin_end(10)
+        self.detection_label.set_margin_top(8)
+        self.detection_label.set_margin_bottom(8)
+        detection_frame.add(self.detection_label)
+        image_box.pack_start(detection_frame, False, False, 0)
         paned.pack1(image_box, resize=True, shrink=False)
 
         chat_box = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=8)
@@ -128,7 +135,11 @@ class CameraVlmWindow(Gtk.Window):
         self.preview_generation += 1
         generation = self.preview_generation
         env = os.environ.copy()
-        env["LD_LIBRARY_PATH"] = str(REALSENSE_PREFIX / "lib")
+        env["LD_LIBRARY_PATH"] = os.pathsep.join(
+            [str(REALSENSE_PREFIX / "lib"), str(RKLLM_PREFIX / "lib")]
+        )
+        env["YOLO_MODEL_PATH"] = str(DETECTOR_MODEL)
+        env["YOLO_LABELS_PATH"] = str(DETECTOR_LABELS)
         try:
             self.preview_process = subprocess.Popen(
                 [str(PREVIEW_APP)], stdout=subprocess.PIPE, stderr=subprocess.PIPE, env=env
@@ -158,16 +169,13 @@ class CameraVlmWindow(Gtk.Window):
         frame_size = 640 * 480 * 3
         try:
             while self.preview_process and generation == self.preview_generation:
-                packet = self.preview_process.stdout.read(frame_size * 3)
-                if len(packet) != frame_size * 3:
+                packet = self.preview_process.stdout.read(frame_size * 2)
+                if len(packet) != frame_size * 2:
                     break
                 frame = packet[:frame_size]
-                depth_frame = packet[frame_size:frame_size * 2]
-                point_cloud_frame = packet[frame_size * 2:]
+                depth_frame = packet[frame_size:]
                 self.last_frame = frame
-                GLib.idle_add(
-                    self.show_live_frame, frame, depth_frame, point_cloud_frame, generation
-                )
+                GLib.idle_add(self.show_live_frame, frame, depth_frame, generation)
         except Exception as error:
             GLib.idle_add(self.capture_failed, str(error))
 
@@ -179,12 +187,30 @@ class CameraVlmWindow(Gtk.Window):
             if generation != self.preview_generation:
                 break
             line = raw_line.decode("utf-8", errors="replace").strip()
-            if line.startswith("depth="):
-                GLib.idle_add(self.depth_label.set_text, f"中心距离：{line[6:]} m")
+            if line.startswith("detections="):
+                GLib.idle_add(self.show_detections, line[len("detections="):])
             elif line.startswith("error="):
                 GLib.idle_add(self.capture_failed, line[6:])
 
-    def show_live_frame(self, frame, depth_frame, point_cloud_frame, generation):
+    def show_detections(self, payload):
+        colors = ["#ff4848", "#50d278", "#4196ff", "#ffc33c", "#d25aeb", "#32d7d7"]
+        rows = []
+        for item in filter(None, payload.split(";")):
+            fields = item.split("|")
+            if len(fields) != 8:
+                continue
+            index, label, confidence, _left, _top, _right, _bottom, distance = fields
+            color = colors[(int(index) - 1) % len(colors)]
+            distance_text = f"{float(distance):.2f} m" if float(distance) > 0 else "距离不可用"
+            rows.append(
+                f'<span foreground="{color}"><b>#{index}</b></span>  '
+                f'<b>{GLib.markup_escape_text(label)}</b>  '
+                f'置信度 {float(confidence):.0%}  距离 <b>{distance_text}</b>'
+            )
+        self.detection_label.set_markup("\n".join(rows) if rows else "当前画面未识别到物品")
+        return False
+
+    def show_live_frame(self, frame, depth_frame, generation):
         if generation != self.preview_generation:
             return False
         pixels = GLib.Bytes.new(frame)
@@ -195,18 +221,11 @@ class CameraVlmWindow(Gtk.Window):
         depth_pixbuf = GdkPixbuf.Pixbuf.new_from_bytes(
             depth_pixels, GdkPixbuf.Colorspace.RGB, False, 8, 640, 480, 640 * 3
         )
-        point_cloud_pixels = GLib.Bytes.new(point_cloud_frame)
-        point_cloud_pixbuf = GdkPixbuf.Pixbuf.new_from_bytes(
-            point_cloud_pixels, GdkPixbuf.Colorspace.RGB, False, 8, 640, 480, 640 * 3
-        )
         self.image.set_from_pixbuf(
-            rgb_pixbuf.scale_simple(350, 263, GdkPixbuf.InterpType.BILINEAR)
+            rgb_pixbuf.scale_simple(520, 390, GdkPixbuf.InterpType.BILINEAR)
         )
         self.depth_image.set_from_pixbuf(
-            depth_pixbuf.scale_simple(350, 263, GdkPixbuf.InterpType.BILINEAR)
-        )
-        self.point_cloud_image.set_from_pixbuf(
-            point_cloud_pixbuf.scale_simple(350, 263, GdkPixbuf.InterpType.BILINEAR)
+            depth_pixbuf.scale_simple(520, 390, GdkPixbuf.InterpType.BILINEAR)
         )
         self.capture_button.set_sensitive(False)
         self.send_button.set_sensitive(True)
@@ -248,7 +267,7 @@ class CameraVlmWindow(Gtk.Window):
         self.keyframe_path = pathlib.Path(image_path)
         pixbuf = GdkPixbuf.Pixbuf.new_from_file_at_scale(image_path, 540, 540, True)
         self.image.set_from_pixbuf(pixbuf)
-        self.depth_label.set_text(f"中心距离：{depth} m")
+        self.detection_label.set_text("静态关键帧已采集；恢复实时画面后继续逐目标测距")
         self.capture_button.set_sensitive(True)
         self.send_button.set_sensitive(True)
         self.set_status("画面已更新，可以提问")
