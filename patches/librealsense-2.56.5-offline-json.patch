@@ -1,0 +1,20 @@
+diff --git a/CMake/external_json.cmake b/CMake/external_json.cmake
+index 7754878..70e186f 100644
+--- a/CMake/external_json.cmake
++++ b/CMake/external_json.cmake
+@@ -8,6 +8,16 @@ include(ExternalProject)
+ function(get_nlohmann_json)
+ 
++    if(EXISTS "${CMAKE_SOURCE_DIR}/third-party/json/CMakeLists.txt")
++        message(STATUS "Using pinned offline nlohmann/json source...")
++        file(COPY "${CMAKE_SOURCE_DIR}/third-party/json/include/"
++             DESTINATION "${CMAKE_BINARY_DIR}/third-party/json/include")
++        add_subdirectory("${CMAKE_SOURCE_DIR}/third-party/json"
++                         "${CMAKE_BINARY_DIR}/third-party/json-build")
++        message(STATUS "Using pinned offline nlohmann/json source - Done")
++        return()
++    endif()
++
+     message( STATUS #CHECK_START
+         "Fetching nlohmann/json..." )
+     #list( APPEND CMAKE_MESSAGE_INDENT "  " )  # Indent outputs

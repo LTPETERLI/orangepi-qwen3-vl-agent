@@ -303,8 +303,9 @@ rockchip_stack:
     private_runtime_ldd_verified: true
     missing_dependencies: 0
     help_smoke_test: "PASS: model not loaded"
+    interactive_text_test: "PASS: user-reported successful on 2026-08-05"
     report: "TEXT_CHAT_INTEGRATION_REPORT.md"
-    model_execution_authorized: false
+    model_execution_authorized: "completed user test only; further automated execution remains gated"
     status: "verified"
   rknpu_driver_source:
     version: "0.9.8"
@@ -440,10 +441,58 @@ models:
 camera_stack:
   librealsense:
     backend: "RSUSB/user-space"
-    selected_version: null
-    installation_prefix: null
+    selected_version: "2.56.5"
+    source: "https://github.com/realsenseai/librealsense.git"
+    commit: "38a41441971387197193ad3aeae3cefe6a11f2cb"
+    git_archive_sha256: "babf60fe36d260b56f23d80b3abb5039c4119fc80b74afdb4205fc8507481125"
+    installation_prefix: "/home/orangepi/qwen3_vl_2b_ws/runtime/librealsense-2.56.5-rsusb"
+    build_options:
+      FORCE_RSUSB_BACKEND: true
+      BUILD_EXAMPLES: false
+      BUILD_GRAPHICAL_EXAMPLES: false
+      BUILD_TOOLS: false
+      BUILD_PYTHON_BINDINGS: false
+      BUILD_UNIT_TESTS: false
+      BUILD_WITH_DDS: false
+      BUILD_WITH_CUDA: false
+    library_sha256: "34f7990a001c300247b9838c4e9a8d64a337351bf4fa6fcf8d275a8bb851d4c9"
+    offline_dependency:
+      name: "nlohmann/json"
+      version: "3.11.3"
+      commit: "9cca280a4d0ccf0c08f47a99aa71d1b0e52f8d03"
+      git_archive_sha256: "758268d6b3c0fdcba8ec1d6f0ff35a59b2453f6c468ba4c075a42964d065472b"
+      patch: "patches/librealsense-2.56.5-offline-json.patch"
+    system_build_dependency:
+      package: "libusb-1.0-0-dev"
+      version: "2:1.0.25-1ubuntu2"
+    udev_rule:
+      path: "/etc/udev/rules.d/99-realsense-libusb.rules"
+      sha256: "21dd6bc40a117c9bb9dc93d78c9f77f2f74fae9f9eba75aa4714b25939d7532a"
     dkms_allowed: false
-    status: "planned"
+    firmware_update_performed: false
+    status: "verified"
+  camera_check:
+    interface: "RealSenseCamera"
+    executable: "/home/orangepi/qwen3_vl_2b_ws/app/realsense-camera-check"
+    sha256: "de868841303146f66e8d7c3b926195debaf832b8e713493ce161fa7bab90aa87"
+    camera_serial: "254722302521"
+    camera_firmware: "5.15.1.55"
+    usb_descriptor: "3.2"
+    initial_capture:
+      color: "640x480@15"
+      depth: "640x480@15"
+      aligned_frames: 150
+      timestamp_regressions: 0
+      valid_center_depth_frames: 150
+      status: "verified"
+    reconnect_capture:
+      aligned_frames: 30
+      timestamp_regressions: 0
+      valid_center_depth_frames: 30
+      status: "verified"
+    endurance_30_minutes: "planned"
+    report: "REALSENSE_RSUSB_BASELINE_REPORT.md"
+    status: "verified"
   v4l2:
     video_nodes: "/dev/video0 through /dev/video5"
     status: "verified"

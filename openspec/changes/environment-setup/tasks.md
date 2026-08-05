@@ -23,8 +23,8 @@
 ## 4. RealSense Baseline
 
 - [x] 4.1 Verify D455 identity and direct `5000M` USB connection.
-- [ ] 4.2 Pin librealsense release, source commit, build options, and SHA256.
-- [ ] 4.3 Build RSUSB backend into a project-private prefix without DKMS.
+- [x] 4.2 Pin librealsense release, source commit, build options, and SHA256.
+- [x] 4.3 Build RSUSB backend into a project-private prefix without DKMS.
 - [ ] 4.4 Validate aligned 640x480@15 RGB-D capture, reconnect, and endurance.
 
 ## 5. Integration and Promotion
