@@ -4,12 +4,12 @@
 
 The camera VLM GUI now supports a local half-duplex, hands-free voice workflow:
 
-1. Select **开启语音对话** once; the ES8388 microphone then listens continuously.
+1. The ES8388 microphone starts listening automatically three seconds after the GUI launches.
 2. Local amplitude detection finds speech and submits an utterance after the speaker pauses.
 3. Run local Chinese transcription with Whisper.
 4. Submit the recognized text to the already deployed Qwen3-VL camera session.
 5. Synthesize the completed answer with Piper and play it through the default PulseAudio output.
-6. Resume listening automatically after playback; select **停止语音对话** to exit.
+6. Resume listening automatically after playback; select **停止语音对话** to exit and use the same button to resume.
 
 No network connection is required after the speech models and application are installed.
 
@@ -34,5 +34,15 @@ Recorded audio, transcripts, and synthesized answers are stored under `logs/voic
 
 - Live microphone input was recorded and transcribed by Whisper; transcript files were produced successfully.
 - The user confirmed hearing the synthesized Chinese test phrase from `Round-X09`.
-- One complete voice question through Qwen3-VL and back to speech remains to be confirmed by the user.
+- A complete microphone -> Whisper -> Qwen3-VL -> Piper -> Round-X09 turn was verified on 2026-08-06. Listening resumed automatically after playback.
 - The `zh_CN-huayan-medium` model card declares the source dataset license as unknown. Keep it limited to local prototype use until redistribution rights are resolved.
+
+## Latency And Microphone Correction
+
+On 2026-08-06, two orphaned Qwen demo processes were found consuming approximately 6.4 GB RSS in total and more than two CPU cores. The GUI now launches Qwen in its own process group and escalates cleanup from a graceful exit to `SIGTERM` and then `SIGKILL` when required.
+
+The orphaned processes were blocked in RKNPU driver work and produced `failed to allocate IOVA: -12` when another model attempted to load. A board reboot was required to release them. After reboot, approximately 14 GiB was available and no new IOVA allocation error appeared during the accepted voice round trip.
+
+The first continuous-listening threshold was too high for measured speech near -36 dBFS. Continuous mode now calibrates ambient noise for 0.8 seconds, clamps its adaptive speech threshold between 120 and 350 RMS, requires two consecutive speech windows, and ends an utterance after 1.2 seconds of silence. Whisper uses six CPU threads and single-candidate decoding to reduce latency.
+
+The deployed demo may delimit a completed answer with either an `I rkllm:` statistics line or the next `user:` prompt. The GUI accepts both formats before starting Piper playback.

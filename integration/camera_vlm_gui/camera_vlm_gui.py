@@ -56,7 +56,7 @@ class CameraVlmWindow(Gtk.Window):
         self.voice_conversation_active = False
         self.voice_turn_complete = threading.Event()
         self.voice_turn_complete.set()
-        self.detection_enabled = True
+        self.detection_enabled = False
 
         root = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=10)
         self.add(root)
@@ -68,7 +68,7 @@ class CameraVlmWindow(Gtk.Window):
         self.capture_button.connect("clicked", self.on_capture)
         toolbar.pack_start(self.capture_button, False, False, 0)
 
-        self.detection_button = Gtk.Button.new_with_label("关闭物品识别")
+        self.detection_button = Gtk.Button.new_with_label("开启物品识别")
         self.detection_button.connect("clicked", self.on_detection_toggle)
         toolbar.pack_start(self.detection_button, False, False, 0)
 
@@ -99,7 +99,7 @@ class CameraVlmWindow(Gtk.Window):
         camera_grid.attach(depth_frame, 1, 0, 1, 1)
         image_box.pack_start(camera_grid, True, True, 0)
         detection_frame = Gtk.Frame(label="物品识别结果与距离")
-        self.detection_label = Gtk.Label(label="正在等待检测结果...")
+        self.detection_label = Gtk.Label(label="物品识别已关闭")
         self.detection_label.set_xalign(0)
         self.detection_label.set_yalign(0)
         self.detection_label.set_line_wrap(True)
@@ -141,6 +141,7 @@ class CameraVlmWindow(Gtk.Window):
         paned.set_position(1110)
 
         GLib.idle_add(self.start_preview)
+        GLib.timeout_add_seconds(3, self.auto_start_voice)
 
     def set_status(self, message):
         self.status.set_text(message)
@@ -351,7 +352,8 @@ class CameraVlmWindow(Gtk.Window):
             "128", "4096", "3", "rk3588",
         ]
         self.model_process = subprocess.Popen(
-            command, stdin=slave, stdout=slave, stderr=slave, env=env, close_fds=True
+            command, stdin=slave, stdout=slave, stderr=slave, env=env, close_fds=True,
+            start_new_session=True,
         )
         os.close(slave)
         self.model_pty = master
@@ -373,7 +375,11 @@ class CameraVlmWindow(Gtk.Window):
                     self.model_response_buffer = self.model_response_buffer[-131072:]
                 if self.pending_voice_response:
                     plain = re.sub(r"\x1b\[[0-9;?]*[ -/]*[@-~]", "", self.model_response_buffer)
-                    match = re.search(r"robot:\s*(.*?)\r?\nI rkllm:", plain, re.DOTALL)
+                    match = re.search(
+                        r"robot:\s*(.*?)(?:\r?\nI rkllm:|\r?\nuser:\s*)",
+                        plain,
+                        re.DOTALL,
+                    )
                     if match:
                         self.pending_voice_response = False
                         answer = match.group(1).strip()
@@ -415,12 +421,17 @@ class CameraVlmWindow(Gtk.Window):
         self.set_status("语音对话已开启")
         threading.Thread(target=self.voice_conversation_worker, daemon=True).start()
 
+    def auto_start_voice(self):
+        if not self.voice_conversation_active:
+            self.on_voice_toggle(self.voice_button)
+        return False
+
     def voice_conversation_worker(self):
         while self.voice_conversation_active:
             run_id = datetime.datetime.now().strftime("%Y%m%dT%H%M%S%f")
             self.record_run_dir = WORKSPACE / "logs/voice" / run_id
             self.record_run_dir.mkdir(parents=True, exist_ok=True)
-            GLib.idle_add(self.set_listening_status)
+            GLib.idle_add(self.set_status, "正在校准麦克风环境噪声...")
             try:
                 if not self.capture_utterance(self.record_run_dir / "recording-stereo.pcm"):
                     continue
@@ -457,6 +468,7 @@ class CameraVlmWindow(Gtk.Window):
         utterance = []
         speech_started = False
         quiet_chunks = 0
+        speech_hits = 0
         started_at = time.monotonic()
         try:
             while self.voice_conversation_active:
@@ -466,12 +478,18 @@ class CameraVlmWindow(Gtk.Window):
                 rms = audioop.rms(chunk, 2)
                 if len(calibration) < 8:
                     calibration.append(rms)
+                    if len(calibration) == 8:
+                        GLib.idle_add(self.set_listening_status)
                     continue
                 noise_floor = sorted(calibration)[len(calibration) // 2]
-                threshold = max(700, int(noise_floor * 2.2))
+                threshold = min(350, max(120, int(noise_floor * 1.6), noise_floor + 80))
                 if not speech_started:
                     pre_roll = (pre_roll + [chunk])[-5:]
                     if rms >= threshold:
+                        speech_hits += 1
+                    else:
+                        speech_hits = 0
+                    if speech_hits >= 2:
                         speech_started = True
                         utterance.extend(pre_roll)
                         quiet_chunks = 0
@@ -494,6 +512,11 @@ class CameraVlmWindow(Gtk.Window):
         if len(utterance) < 8:
             return False
         raw_path.write_bytes(b"".join(utterance))
+        (raw_path.parent / "vad.txt").write_text(
+            f"noise_floor_rms={noise_floor}\nthreshold_rms={threshold}\n"
+            f"chunks={len(utterance)}\n",
+            encoding="utf-8",
+        )
         return True
 
     def transcribe_audio(self):
@@ -515,7 +538,8 @@ class CameraVlmWindow(Gtk.Window):
             subprocess.run(
                 [
                     str(WHISPER_CLI), "-m", str(WHISPER_MODEL), "-f", str(speech_path),
-                    "-l", "zh", "-t", "4", "-nt", "-np", "-otxt", "-of", str(output_base),
+                    "-l", "zh", "-t", "6", "-bs", "1", "-bo", "1", "-nf",
+                    "-nt", "-np", "-otxt", "-of", str(output_base),
                 ],
                 env=whisper_env,
                 check=True,
@@ -600,7 +624,11 @@ class CameraVlmWindow(Gtk.Window):
                 os.write(self.model_pty, b"exit\n")
                 self.model_process.wait(timeout=5)
             except Exception:
-                self.model_process.send_signal(signal.SIGTERM)
+                try:
+                    os.killpg(self.model_process.pid, signal.SIGTERM)
+                    self.model_process.wait(timeout=5)
+                except Exception:
+                    os.killpg(self.model_process.pid, signal.SIGKILL)
 
     def model_stopped(self):
         self.voice_turn_complete.set()

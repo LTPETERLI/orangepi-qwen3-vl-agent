@@ -550,6 +550,7 @@ camera_stack:
     object_detection_ui: "numbered RGB boxes plus bottom-left class, confidence, and per-object distance list"
     object_detection_execution: "user-authorized; live NPU validation passed"
     object_detection_toggle: "GUI switch restarts preview; disabled mode does not initialize or execute YOLO/RKNN"
+    object_detection_default: "disabled on GUI launch"
     object_detection_disabled_smoke_test: "verified"
     launcher: "/home/orangepi/qwen3_vl_2b_ws/bin/camera-vlm-gui"
     launcher_sha256: "76bc616f6fc2275f2aa2c61a29b069fd541aea9bb575f3ad2dbb3d9cae6f6292"
@@ -565,7 +566,8 @@ camera_stack:
     report: "CAMERA_VLM_GUI_REPORT.md"
     status: "verified"
   offline_speech:
-    interaction: "one-click continuous conversation with local amplitude-based end-of-speech detection, offline ASR, automatic prompt submission, and offline TTS"
+    interaction: "automatic continuous conversation on GUI launch with local amplitude-based end-of-speech detection, offline ASR, automatic prompt submission, and offline TTS"
+    startup_behavior: "listening starts automatically three seconds after GUI launch; button stops or resumes conversation"
     half_duplex: true
     echo_prevention: "capture pauses while Qwen is answering and while TTS is playing"
     network_required_at_runtime: false
@@ -597,6 +599,12 @@ camera_stack:
       model_size_bytes: 147951465
       model_sha256: "60ed5bc3dd14eea856493d334349b405782ddcaf0028d4b5df4088345fba2efe"
       language: "zh"
+      decoding: "6 CPU threads, beam size 1, best-of 1, no fallback"
+      voice_activity_detection:
+        method: "100 ms PCM RMS windows"
+        calibration_seconds: 0.8
+        threshold: "clamped adaptive threshold: max(120, noise*1.6, noise+80), capped at 350 RMS"
+        end_silence_seconds: 1.2
       spoken_validation: "recognized live microphone input and wrote transcript.txt"
       status: "verified"
     tts:
@@ -619,8 +627,16 @@ camera_stack:
     validation:
       microphone_to_transcript: "verified"
       synthesized_audio_to_round_x09: "verified by user"
-      qwen_voice_round_trip: "pending user question"
-    status: "installed_pending_qwen_voice_round_trip"
+      qwen_voice_round_trip: "verified on 2026-08-06; microphone resumed automatically after playback"
+    status: "verified"
+    process_cleanup:
+      qwen_process_group: true
+      graceful_timeout_seconds: 5
+      forced_group_termination: "SIGTERM followed by SIGKILL"
+      stale_processes_removed_on_2026_08_06: 2
+      recovery: "board reboot was required because both stale processes were blocked in RKNPU driver work"
+      post_reboot_available_memory: "14 GiB"
+      post_reboot_iova_errors: 0
   v4l2:
     video_nodes: "/dev/video0 through /dev/video5"
     status: "verified"
