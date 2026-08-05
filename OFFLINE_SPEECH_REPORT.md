@@ -48,3 +48,5 @@ The first continuous-listening threshold was too high for measured speech near -
 The deployed demo may delimit a completed answer with either an `I rkllm:` statistics line or the next `user:` prompt. The GUI accepts both formats before starting Piper playback.
 
 Voice turns cap Qwen output at 64 tokens to reduce generation and playback latency. The accepted post-reboot turn began Bluetooth playback approximately 19 seconds after the Qwen process started; later turns reuse the resident model.
+
+Every Qwen voice prompt includes the persistent identity instruction that the assistant is named `嘚包`, the user is `主人`, and each response begins with `主人，`. Playback explicitly targets the `Round-X09` A2DP sink whenever it is available instead of relying only on the PulseAudio default.

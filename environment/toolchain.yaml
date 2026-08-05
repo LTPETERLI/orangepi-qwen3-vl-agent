@@ -569,6 +569,11 @@ camera_stack:
     interaction: "automatic continuous conversation on GUI launch with local amplitude-based end-of-speech detection, offline ASR, automatic prompt submission, and offline TTS"
     startup_behavior: "listening starts automatically three seconds after GUI launch; button stops or resumes conversation"
     voice_answer_max_tokens: 64
+    assistant_identity:
+      name: "嘚包"
+      user_title: "主人"
+      response_prefix: "主人，"
+      persistence: "prepended to every Qwen voice prompt"
     half_duplex: true
     echo_prevention: "capture pauses while Qwen is answering and while TTS is playing"
     network_required_at_runtime: false
@@ -582,6 +587,7 @@ camera_stack:
       backend: "PulseAudio"
       command: "paplay"
       default_sink: "bluez_sink.95_61_74_9B_F6_77.a2dp_sink"
+      routing: "paplay explicitly targets the Round-X09 sink when present"
       device: "Round-X09 (95:61:74:9B:F6:77)"
       bluetooth_profile: "A2DP sink"
       paired: true

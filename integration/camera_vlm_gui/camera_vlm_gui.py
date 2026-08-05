@@ -34,6 +34,11 @@ WHISPER_CLI = WHISPER_BUILD / "whisper-cli"
 WHISPER_MODEL = WORKSPACE / "models/speech/ggml-base.bin"
 PIPER_PYTHON = WORKSPACE / "runtime/piper-1.6.0/bin/python"
 PIPER_MODEL = WORKSPACE / "models/speech/zh_CN-huayan-medium.onnx"
+BLUETOOTH_SINK = "bluez_sink.95_61_74_9B_F6_77.a2dp_sink"
+PERSONA_INSTRUCTION = (
+    "你是离线视觉助手嘚包，当前用户是你的主人。"
+    "每次回答必须以‘主人，’开头，然后简洁、自然地回答问题。"
+)
 
 
 class CameraVlmWindow(Gtk.Window):
@@ -396,7 +401,7 @@ class CameraVlmWindow(Gtk.Window):
             return False
         self.pending_voice_response = True
         self.model_response_buffer = ""
-        full_prompt = "<image>" + prompt
+        full_prompt = f"<image>{PERSONA_INSTRUCTION}用户问题：{prompt}"
         os.write(self.model_pty, (full_prompt + "\n").encode("utf-8"))
         self.append_output(f"\n你：{prompt}\n")
         return True
@@ -583,9 +588,17 @@ class CameraVlmWindow(Gtk.Window):
                 check=True,
                 timeout=180,
             )
-            self.tts_process = subprocess.Popen(
-                ["paplay", str(output_path)]
-            )
+            sinks = subprocess.run(
+                ["pactl", "list", "short", "sinks"],
+                text=True,
+                capture_output=True,
+                timeout=10,
+                check=True,
+            ).stdout
+            playback_command = ["paplay", str(output_path)]
+            if BLUETOOTH_SINK in sinks:
+                playback_command = ["paplay", f"--device={BLUETOOTH_SINK}", str(output_path)]
+            self.tts_process = subprocess.Popen(playback_command)
             self.tts_process.wait(timeout=180)
             self.tts_process = None
             GLib.idle_add(self.speech_complete)
