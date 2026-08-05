@@ -120,7 +120,7 @@ hosts:
     soc: "RK3588S"
     memory: "16GB"
     architecture: "aarch64"
-    address: "10.10.24.218"
+    address: "192.168.31.89"
     current_environment:
       os:
         distribution: "Ubuntu"
@@ -251,7 +251,7 @@ rockchip_stack:
     post_boot_validation:
       ssh_reconnected: true
       wifi_connection: "UBT"
-      wifi_address: "10.10.24.218/24"
+      wifi_address: "192.168.31.89/24"
       root_device: "/dev/mmcblk0p2"
       boot_device: "/dev/mmcblk0p1"
       installed_module_count: 772
@@ -286,6 +286,25 @@ rockchip_stack:
     test_image_sha256: "58c5c9898c5359bcf53797711e3d954c8ef529e141cb012ffc433376933839e7"
     private_runtime_ldd_verified: true
     missing_dependencies: 0
+    status: "verified"
+  project_text_chat:
+    source: "integration/vlm_chat"
+    api_source: "official RKLLM 1.3.0 header and runtime"
+    rejected_integration: "Qwen3-VL-2B-NPU@03118c9887e6489c92d2bbc7ba4c772f12898094 uses an incompatible pre-1.3.0 multimodal API"
+    build_script: "scripts/build-vlm-chat.sh"
+    run_script: "scripts/run-vlm-chat.sh"
+    build_host: "Orange Pi 5 Pro native AArch64"
+    sdk_prefix: "/home/orangepi/qwen3_vl_2b_ws/runtime/rkllm-1.3.0"
+    executable: "/home/orangepi/qwen3_vl_2b_ws/app/orangepi-text-chat"
+    launcher: "/home/orangepi/qwen3_vl_2b_ws/bin/qwen3-vl-chat"
+    sha256: "57b17d4c32bdbb3d2d234914c6ebe29cc0c489ddc07ddf8ea71d807dc0cbfd50"
+    mode: "text-only"
+    architecture: "aarch64"
+    private_runtime_ldd_verified: true
+    missing_dependencies: 0
+    help_smoke_test: "PASS: model not loaded"
+    report: "TEXT_CHAT_INTEGRATION_REPORT.md"
+    model_execution_authorized: false
     status: "verified"
   rknpu_driver_source:
     version: "0.9.8"

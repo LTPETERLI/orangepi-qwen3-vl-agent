@@ -29,7 +29,7 @@
 
 ## 5. Integration and Promotion
 
-- [ ] 5.1 Audit and fix the pinned Qwen3-VL-2B-NPU submodule integration path.
+- [x] 5.1 Audit the pinned Qwen3-VL-2B-NPU path, reject its incompatible pre-1.3.0 API, and build the project text entry point against official RKLLM 1.3.0.
 - [ ] 5.2 Complete the first camera-to-VLM workflow and offline test.
 - [ ] 5.3 Update all OpenSpec evidence and toolchain states.
 - [ ] 5.4 Obtain explicit user approval before merging to `main`.
