@@ -19,6 +19,7 @@ int main() try {
     config.enable_stream(RS2_STREAM_DEPTH, 640, 480, RS2_FORMAT_Z16, 15);
     pipeline.start(config);
     rs2::align align_to_color(RS2_STREAM_COLOR);
+    rs2::colorizer depth_colorizer;
 
     int frame_index = 0;
     while (running) {
@@ -26,8 +27,10 @@ int main() try {
         const rs2::video_frame color = frames.get_color_frame();
         const rs2::depth_frame depth = frames.get_depth_frame();
         if (!color || !depth) continue;
+        const rs2::video_frame colorized_depth = depth_colorizer.colorize(depth);
 
         std::cout.write(static_cast<const char*>(color.get_data()), 640 * 480 * 3);
+        std::cout.write(static_cast<const char*>(colorized_depth.get_data()), 640 * 480 * 3);
         std::cout.flush();
         if (!std::cout) break;
 

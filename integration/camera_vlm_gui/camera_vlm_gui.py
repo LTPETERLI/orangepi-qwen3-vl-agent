@@ -28,7 +28,7 @@ LANGUAGE_MODEL = MODEL_DIR / "qwen3-vl-2b-instruct_w8a8_rk3588.hf.rkllm"
 class CameraVlmWindow(Gtk.Window):
     def __init__(self):
         super().__init__(title="Orange Pi Qwen3-VL")
-        self.set_default_size(1180, 720)
+        self.set_default_size(1420, 780)
         self.set_border_width(12)
         self.connect("destroy", self.on_destroy)
 
@@ -65,10 +65,16 @@ class CameraVlmWindow(Gtk.Window):
         root.pack_start(paned, True, True, 0)
 
         image_box = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=8)
+        camera_grid = Gtk.Grid(column_spacing=8, row_spacing=6)
         self.image = Gtk.Image()
-        image_frame = Gtk.Frame(label="RealSenseCamera")
-        image_frame.add(self.image)
-        image_box.pack_start(image_frame, True, True, 0)
+        self.depth_image = Gtk.Image()
+        rgb_frame = Gtk.Frame(label="RGB 实时画面")
+        rgb_frame.add(self.image)
+        depth_frame = Gtk.Frame(label="对齐深度图")
+        depth_frame.add(self.depth_image)
+        camera_grid.attach(rgb_frame, 0, 0, 1, 1)
+        camera_grid.attach(depth_frame, 1, 0, 1, 1)
+        image_box.pack_start(camera_grid, True, True, 0)
         self.depth_label = Gtk.Label(label="中心距离：尚未采集")
         image_box.pack_start(self.depth_label, False, False, 0)
         paned.pack1(image_box, resize=True, shrink=False)
@@ -93,7 +99,7 @@ class CameraVlmWindow(Gtk.Window):
         question_row.pack_start(self.send_button, False, False, 0)
         chat_box.pack_start(question_row, False, False, 0)
         paned.pack2(chat_box, resize=True, shrink=False)
-        paned.set_position(570)
+        paned.set_position(850)
 
         GLib.idle_add(self.start_preview)
 
@@ -148,11 +154,13 @@ class CameraVlmWindow(Gtk.Window):
         frame_size = 640 * 480 * 3
         try:
             while self.preview_process and generation == self.preview_generation:
-                frame = self.preview_process.stdout.read(frame_size)
-                if len(frame) != frame_size:
+                packet = self.preview_process.stdout.read(frame_size * 2)
+                if len(packet) != frame_size * 2:
                     break
+                frame = packet[:frame_size]
+                depth_frame = packet[frame_size:]
                 self.last_frame = frame
-                GLib.idle_add(self.show_live_frame, frame, generation)
+                GLib.idle_add(self.show_live_frame, frame, depth_frame, generation)
         except Exception as error:
             GLib.idle_add(self.capture_failed, str(error))
 
@@ -169,14 +177,23 @@ class CameraVlmWindow(Gtk.Window):
             elif line.startswith("error="):
                 GLib.idle_add(self.capture_failed, line[6:])
 
-    def show_live_frame(self, frame, generation):
+    def show_live_frame(self, frame, depth_frame, generation):
         if generation != self.preview_generation:
             return False
         pixels = GLib.Bytes.new(frame)
-        pixbuf = GdkPixbuf.Pixbuf.new_from_bytes(
+        rgb_pixbuf = GdkPixbuf.Pixbuf.new_from_bytes(
             pixels, GdkPixbuf.Colorspace.RGB, False, 8, 640, 480, 640 * 3
         )
-        self.image.set_from_pixbuf(pixbuf.scale_simple(540, 405, GdkPixbuf.InterpType.BILINEAR))
+        depth_pixels = GLib.Bytes.new(depth_frame)
+        depth_pixbuf = GdkPixbuf.Pixbuf.new_from_bytes(
+            depth_pixels, GdkPixbuf.Colorspace.RGB, False, 8, 640, 480, 640 * 3
+        )
+        self.image.set_from_pixbuf(
+            rgb_pixbuf.scale_simple(400, 300, GdkPixbuf.InterpType.BILINEAR)
+        )
+        self.depth_image.set_from_pixbuf(
+            depth_pixbuf.scale_simple(400, 300, GdkPixbuf.InterpType.BILINEAR)
+        )
         self.capture_button.set_sensitive(False)
         self.send_button.set_sensitive(True)
         self.set_status("实时画面 640x480@15")
