@@ -28,7 +28,7 @@ LANGUAGE_MODEL = MODEL_DIR / "qwen3-vl-2b-instruct_w8a8_rk3588.hf.rkllm"
 class CameraVlmWindow(Gtk.Window):
     def __init__(self):
         super().__init__(title="Orange Pi Qwen3-VL")
-        self.set_default_size(1420, 780)
+        self.set_default_size(1600, 780)
         self.set_border_width(12)
         self.connect("destroy", self.on_destroy)
 
@@ -68,12 +68,16 @@ class CameraVlmWindow(Gtk.Window):
         camera_grid = Gtk.Grid(column_spacing=8, row_spacing=6)
         self.image = Gtk.Image()
         self.depth_image = Gtk.Image()
+        self.point_cloud_image = Gtk.Image()
         rgb_frame = Gtk.Frame(label="RGB 实时画面")
         rgb_frame.add(self.image)
         depth_frame = Gtk.Frame(label="对齐深度图")
         depth_frame.add(self.depth_image)
+        point_cloud_frame = Gtk.Frame(label="原始 XYZ 点云（固定视角）")
+        point_cloud_frame.add(self.point_cloud_image)
         camera_grid.attach(rgb_frame, 0, 0, 1, 1)
         camera_grid.attach(depth_frame, 1, 0, 1, 1)
+        camera_grid.attach(point_cloud_frame, 2, 0, 1, 1)
         image_box.pack_start(camera_grid, True, True, 0)
         self.depth_label = Gtk.Label(label="中心距离：尚未采集")
         image_box.pack_start(self.depth_label, False, False, 0)
@@ -99,7 +103,7 @@ class CameraVlmWindow(Gtk.Window):
         question_row.pack_start(self.send_button, False, False, 0)
         chat_box.pack_start(question_row, False, False, 0)
         paned.pack2(chat_box, resize=True, shrink=False)
-        paned.set_position(850)
+        paned.set_position(1110)
 
         GLib.idle_add(self.start_preview)
 
@@ -154,13 +158,16 @@ class CameraVlmWindow(Gtk.Window):
         frame_size = 640 * 480 * 3
         try:
             while self.preview_process and generation == self.preview_generation:
-                packet = self.preview_process.stdout.read(frame_size * 2)
-                if len(packet) != frame_size * 2:
+                packet = self.preview_process.stdout.read(frame_size * 3)
+                if len(packet) != frame_size * 3:
                     break
                 frame = packet[:frame_size]
-                depth_frame = packet[frame_size:]
+                depth_frame = packet[frame_size:frame_size * 2]
+                point_cloud_frame = packet[frame_size * 2:]
                 self.last_frame = frame
-                GLib.idle_add(self.show_live_frame, frame, depth_frame, generation)
+                GLib.idle_add(
+                    self.show_live_frame, frame, depth_frame, point_cloud_frame, generation
+                )
         except Exception as error:
             GLib.idle_add(self.capture_failed, str(error))
 
@@ -177,7 +184,7 @@ class CameraVlmWindow(Gtk.Window):
             elif line.startswith("error="):
                 GLib.idle_add(self.capture_failed, line[6:])
 
-    def show_live_frame(self, frame, depth_frame, generation):
+    def show_live_frame(self, frame, depth_frame, point_cloud_frame, generation):
         if generation != self.preview_generation:
             return False
         pixels = GLib.Bytes.new(frame)
@@ -188,11 +195,18 @@ class CameraVlmWindow(Gtk.Window):
         depth_pixbuf = GdkPixbuf.Pixbuf.new_from_bytes(
             depth_pixels, GdkPixbuf.Colorspace.RGB, False, 8, 640, 480, 640 * 3
         )
+        point_cloud_pixels = GLib.Bytes.new(point_cloud_frame)
+        point_cloud_pixbuf = GdkPixbuf.Pixbuf.new_from_bytes(
+            point_cloud_pixels, GdkPixbuf.Colorspace.RGB, False, 8, 640, 480, 640 * 3
+        )
         self.image.set_from_pixbuf(
-            rgb_pixbuf.scale_simple(400, 300, GdkPixbuf.InterpType.BILINEAR)
+            rgb_pixbuf.scale_simple(350, 263, GdkPixbuf.InterpType.BILINEAR)
         )
         self.depth_image.set_from_pixbuf(
-            depth_pixbuf.scale_simple(400, 300, GdkPixbuf.InterpType.BILINEAR)
+            depth_pixbuf.scale_simple(350, 263, GdkPixbuf.InterpType.BILINEAR)
+        )
+        self.point_cloud_image.set_from_pixbuf(
+            point_cloud_pixbuf.scale_simple(350, 263, GdkPixbuf.InterpType.BILINEAR)
         )
         self.capture_button.set_sensitive(False)
         self.send_button.set_sensitive(True)

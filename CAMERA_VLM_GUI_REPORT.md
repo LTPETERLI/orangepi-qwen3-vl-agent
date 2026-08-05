@@ -39,10 +39,10 @@ GUI process started successfully in the active XFCE `:0` session. The
 five video interfaces through `usbfs`, and retained the `5000M` connection. Its
 launch log was empty after the GdkPixbuf version declaration was corrected.
 
-The dual RGB/depth protocol was then validated with both GUI and preview
-processes alive, an empty launch log, and `5000M` retained. This is a colorized
-2D depth visualization; an interactive XYZ point-cloud renderer remains a
-separate optional feature.
+The preview protocol now carries three synchronized views: RGB, aligned
+colorized depth, and an RGB-textured XYZ point cloud rendered from a fixed
+oblique viewpoint. The three-view process remained active with an empty launch
+log and `5000M` retained. Interactive rotation is not yet implemented.
 
 No model question was submitted automatically. Visual question answering is
 triggered only by the local user pressing Send. A full desktop screenshot was
