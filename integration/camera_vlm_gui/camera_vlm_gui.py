@@ -63,6 +63,7 @@ class CameraVlmWindow(Gtk.Window):
         self.voice_turn_complete = threading.Event()
         self.voice_turn_complete.set()
         self.detection_enabled = False
+        self.resume_voice_after_preview = False
 
         root = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=10)
         self.add(root)
@@ -281,6 +282,10 @@ class CameraVlmWindow(Gtk.Window):
         self.voice_button.set_sensitive(True)
         mode = "物品识别已开启" if self.detection_enabled else "物品识别已关闭"
         self.set_status(f"实时画面 640x480@15；{mode}")
+        if self.resume_voice_after_preview:
+            self.resume_voice_after_preview = False
+            self.voice_turn_complete.set()
+            self.set_status("画面已更新，继续聆听")
         return False
 
     def start_capture(self):
@@ -613,16 +618,23 @@ class CameraVlmWindow(Gtk.Window):
 
     def speech_complete(self):
         self.voice_button.set_sensitive(True)
-        self.voice_turn_complete.set()
-        self.set_status("回答播报完成，继续聆听")
+        self.finish_voice_turn("回答播报完成；正在更新画面")
         return False
 
     def speech_failed(self, title, detail):
         self.voice_button.set_sensitive(True)
-        self.voice_turn_complete.set()
         self.set_status(title)
         self.append_output(f"\n[{title}] {detail}\n")
+        self.finish_voice_turn(f"{title}；正在恢复画面")
         return False
+
+    def finish_voice_turn(self, status):
+        if self.model_process and self.model_process.poll() is None:
+            self.resume_voice_after_preview = True
+            self.set_status(status)
+            threading.Thread(target=self.stop_model, daemon=True).start()
+        else:
+            self.voice_turn_complete.set()
 
     def on_clear(self, _button):
         if self.model_process and self.model_process.poll() is None:
@@ -645,7 +657,10 @@ class CameraVlmWindow(Gtk.Window):
                     os.killpg(self.model_process.pid, signal.SIGKILL)
 
     def model_stopped(self):
-        self.voice_turn_complete.set()
+        self.model_process = None
+        self.model_pty = None
+        if not self.resume_voice_after_preview:
+            self.voice_turn_complete.set()
         self.capture_button.set_sensitive(True)
         self.set_status("模型已停止；正在恢复实时画面")
         self.start_preview()

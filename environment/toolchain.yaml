@@ -569,6 +569,7 @@ camera_stack:
     interaction: "automatic continuous conversation on GUI launch with local amplitude-based end-of-speech detection, offline ASR, automatic prompt submission, and offline TTS"
     startup_behavior: "listening starts automatically three seconds after GUI launch; button stops or resumes conversation"
     voice_answer_max_tokens: 64
+    frame_refresh_policy: "after every voice response, stop the fixed-image demo, resume live RGB-D preview, and wait for a fresh frame before listening for the next turn"
     assistant_identity:
       name: "嘚包"
       user_title: "主人"

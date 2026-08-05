@@ -50,3 +50,5 @@ The deployed demo may delimit a completed answer with either an `I rkllm:` stati
 Voice turns cap Qwen output at 64 tokens to reduce generation and playback latency. The accepted post-reboot turn began Bluetooth playback approximately 19 seconds after the Qwen process started; later turns reuse the resident model.
 
 Every Qwen voice prompt includes the persistent identity instruction that the assistant is named `嘚包`, the user is `主人`, and each response begins with `主人，`. Playback explicitly targets the `Round-X09` A2DP sink whenever it is available instead of relying only on the PulseAudio default.
+
+Because the official demo binds one image when the process starts, the GUI stops that model process after every spoken answer, resumes the live RGB-D preview, waits for a fresh frame, and only then resumes listening. Each new question therefore analyzes a current frame, at the cost of reloading the model for every turn.
