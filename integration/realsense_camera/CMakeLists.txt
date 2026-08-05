@@ -26,3 +26,11 @@ set_target_properties(realsense-keyframe PROPERTIES
   BUILD_RPATH "${REALSENSE_PREFIX}/lib"
   INSTALL_RPATH "$ORIGIN/../runtime/librealsense-2.56.5-rsusb/lib"
 )
+
+add_executable(realsense-preview preview.cpp)
+target_compile_options(realsense-preview PRIVATE -Wall -Wextra -Wpedantic)
+target_link_libraries(realsense-preview PRIVATE realsense2::realsense2)
+set_target_properties(realsense-preview PROPERTIES
+  BUILD_RPATH "${REALSENSE_PREFIX}/lib"
+  INSTALL_RPATH "$ORIGIN/../runtime/librealsense-2.56.5-rsusb/lib"
+)

@@ -18,6 +18,7 @@ WORKSPACE = pathlib.Path(os.environ.get("ORANGEPI_WORKSPACE", "/home/orangepi/qw
 REALSENSE_PREFIX = WORKSPACE / "runtime/librealsense-2.56.5-rsusb"
 RKLLM_PREFIX = WORKSPACE / "runtime/rkllm-1.3.0"
 KEYFRAME_APP = WORKSPACE / "app/realsense-keyframe"
+PREVIEW_APP = WORKSPACE / "app/realsense-preview"
 DEMO = WORKSPACE / "vendor-src/rknn-llm-878f936/examples/multimodal_model_demo/deploy/install/demo_Linux_aarch64/demo"
 MODEL_DIR = WORKSPACE / "models/qwen3-vl-2b/rkllm-model-zoo-1.2.3"
 VISION_MODEL = MODEL_DIR / "qwen3-vl-2b_vision_rk3588.rknn"
@@ -34,6 +35,9 @@ class CameraVlmWindow(Gtk.Window):
         self.model_process = None
         self.model_pty = None
         self.keyframe_path = None
+        self.preview_process = None
+        self.last_frame = None
+        self.preview_generation = 0
 
         root = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=10)
         self.add(root)
@@ -41,7 +45,7 @@ class CameraVlmWindow(Gtk.Window):
         toolbar = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=8)
         root.pack_start(toolbar, False, False, 0)
 
-        self.capture_button = Gtk.Button.new_with_label("刷新画面")
+        self.capture_button = Gtk.Button.new_with_label("恢复实时画面")
         self.capture_button.connect("clicked", self.on_capture)
         toolbar.pack_start(self.capture_button, False, False, 0)
 
@@ -91,7 +95,7 @@ class CameraVlmWindow(Gtk.Window):
         paned.pack2(chat_box, resize=True, shrink=False)
         paned.set_position(570)
 
-        GLib.idle_add(self.start_capture)
+        GLib.idle_add(self.start_preview)
 
     def set_status(self, message):
         self.status.set_text(message)
@@ -107,7 +111,76 @@ class CameraVlmWindow(Gtk.Window):
         if self.model_process and self.model_process.poll() is None:
             self.set_status("请先停止模型，再刷新画面")
             return
-        self.start_capture()
+        self.start_preview()
+
+    def start_preview(self):
+        self.stop_preview()
+        self.preview_generation += 1
+        generation = self.preview_generation
+        env = os.environ.copy()
+        env["LD_LIBRARY_PATH"] = str(REALSENSE_PREFIX / "lib")
+        try:
+            self.preview_process = subprocess.Popen(
+                [str(PREVIEW_APP)], stdout=subprocess.PIPE, stderr=subprocess.PIPE, env=env
+            )
+        except Exception as error:
+            self.capture_failed(str(error))
+            return False
+        self.capture_button.set_sensitive(False)
+        self.send_button.set_sensitive(False)
+        self.set_status("正在启动 640x480@15 实时画面...")
+        threading.Thread(target=self.preview_reader, args=(generation,), daemon=True).start()
+        threading.Thread(target=self.preview_status_reader, args=(generation,), daemon=True).start()
+        return False
+
+    def stop_preview(self):
+        self.preview_generation += 1
+        process = self.preview_process
+        self.preview_process = None
+        if process and process.poll() is None:
+            process.terminate()
+            try:
+                process.wait(timeout=3)
+            except subprocess.TimeoutExpired:
+                process.kill()
+
+    def preview_reader(self, generation):
+        frame_size = 640 * 480 * 3
+        try:
+            while self.preview_process and generation == self.preview_generation:
+                frame = self.preview_process.stdout.read(frame_size)
+                if len(frame) != frame_size:
+                    break
+                self.last_frame = frame
+                GLib.idle_add(self.show_live_frame, frame, generation)
+        except Exception as error:
+            GLib.idle_add(self.capture_failed, str(error))
+
+    def preview_status_reader(self, generation):
+        process = self.preview_process
+        if not process:
+            return
+        for raw_line in iter(process.stderr.readline, b""):
+            if generation != self.preview_generation:
+                break
+            line = raw_line.decode("utf-8", errors="replace").strip()
+            if line.startswith("depth="):
+                GLib.idle_add(self.depth_label.set_text, f"中心距离：{line[6:]} m")
+            elif line.startswith("error="):
+                GLib.idle_add(self.capture_failed, line[6:])
+
+    def show_live_frame(self, frame, generation):
+        if generation != self.preview_generation:
+            return False
+        pixels = GLib.Bytes.new(frame)
+        pixbuf = GdkPixbuf.Pixbuf.new_from_bytes(
+            pixels, GdkPixbuf.Colorspace.RGB, False, 8, 640, 480, 640 * 3
+        )
+        self.image.set_from_pixbuf(pixbuf.scale_simple(540, 405, GdkPixbuf.InterpType.BILINEAR))
+        self.capture_button.set_sensitive(False)
+        self.send_button.set_sensitive(True)
+        self.set_status("实时画面 640x480@15")
+        return False
 
     def start_capture(self):
         self.capture_button.set_sensitive(False)
@@ -159,9 +232,17 @@ class CameraVlmWindow(Gtk.Window):
     def ensure_model(self):
         if self.model_process and self.model_process.poll() is None:
             return True
-        if not self.keyframe_path:
-            self.set_status("请先等待画面采集完成")
+        if not self.last_frame:
+            self.set_status("请先等待实时画面出现")
             return False
+        self.stop_preview()
+        run_id = datetime.datetime.now().strftime("%Y%m%dT%H%M%S")
+        run_dir = WORKSPACE / "logs/camera-vlm-gui" / run_id
+        run_dir.mkdir(parents=True, exist_ok=True)
+        self.keyframe_path = run_dir / "keyframe.ppm"
+        with self.keyframe_path.open("wb") as stream:
+            stream.write(b"P6\n640 480\n255\n")
+            stream.write(self.last_frame)
         required = [DEMO, VISION_MODEL, LANGUAGE_MODEL, RKLLM_PREFIX / "lib/librkllmrt.so"]
         missing = [str(path) for path in required if not path.is_file()]
         if missing:
@@ -224,10 +305,12 @@ class CameraVlmWindow(Gtk.Window):
 
     def model_stopped(self):
         self.capture_button.set_sensitive(True)
-        self.set_status("模型已停止；可以刷新画面")
+        self.set_status("模型已停止；正在恢复实时画面")
+        self.start_preview()
         return False
 
     def on_destroy(self, _widget):
+        self.stop_preview()
         self.stop_model()
         Gtk.main_quit()
 

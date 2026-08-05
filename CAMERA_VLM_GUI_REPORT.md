@@ -16,24 +16,27 @@ display: ":0"
 
 ## Behavior
 
-- The left pane displays a current `RealSenseCamera` RGB keyframe and aligned
-  center depth.
+- The left pane displays a live `RealSenseCamera` RGB stream at `640x480@15`
+  with continuously updated aligned center depth.
 - The right pane provides a question input, send button, answer log, history
   clear button, and model stop button.
-- Launching the window captures an RGB-D keyframe but does not load an NPU
-  model.
+- Launching the window starts the project-private RSUSB preview process but
+  does not load an NPU model.
+- Pressing Send freezes the most recent RGB frame into a PPM keyframe, stops
+  the preview to release the camera, and then starts visual inference.
 - The first submitted question starts the approved private RKLLM/RKNN stack
   through the official multimodal demo and a pseudo-terminal, so incremental
   output remains visible in the answer pane.
-- Refreshing the image requires stopping the current model session first. This
-  keeps the displayed image and the model image embedding consistent.
+- Stopping the model automatically resumes live preview. This keeps the
+  displayed frame and model image embedding consistent during each question.
 
 ## Validation
 
 The Python source passes bytecode compilation on the laptop and Orange Pi. The
-GUI process started successfully in the active XFCE `:0` session and generated
-a 921615-byte RGB keyframe. Its launch log was empty after the GdkPixbuf version
-declaration was corrected.
+GUI process started successfully in the active XFCE `:0` session. The
+`realsense-preview` process remained active at approximately 29% CPU, held the
+five video interfaces through `usbfs`, and retained the `5000M` connection. Its
+launch log was empty after the GdkPixbuf version declaration was corrected.
 
 No model question was submitted automatically. Visual question answering is
 triggered only by the local user pressing Send. A full desktop screenshot was

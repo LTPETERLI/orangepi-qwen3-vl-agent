@@ -511,13 +511,16 @@ camera_stack:
     toolkit: "GTK 3.24 via system PyGObject"
     python: "3.10.12"
     application: "/home/orangepi/qwen3_vl_2b_ws/app/camera_vlm_gui.py"
-    application_sha256: "9486ec1d04a6f1beaf586f8a93edb4f2deca6b368d0534bf615afec7c59be99f"
+    application_sha256: "408161ab45cf0e11fd9d750fac66960a58371865a0880322241ad7b780078d51"
+    preview_executable: "/home/orangepi/qwen3_vl_2b_ws/app/realsense-preview"
+    preview_executable_sha256: "29397aadfa3a66c28deaeba8a4f35997a2991ab464167744323c3e70c8384391"
+    preview_stream: "aligned RGB-D 640x480@15"
     launcher: "/home/orangepi/qwen3_vl_2b_ws/bin/camera-vlm-gui"
     launcher_sha256: "76bc616f6fc2275f2aa2c61a29b069fd541aea9bb575f3ad2dbb3d9cae6f6292"
     desktop_entry: "/home/orangepi/Desktop/OrangePi-Qwen3-VL.desktop"
     display: ":0"
     launch_verified: true
-    automatic_keyframe_verified: true
+    live_preview_verified: true
     model_execution_on_launch: false
     local_question_execution: "user-triggered by Send button"
     report: "CAMERA_VLM_GUI_REPORT.md"
