@@ -46,3 +46,5 @@ The orphaned processes were blocked in RKNPU driver work and produced `failed to
 The first continuous-listening threshold was too high for measured speech near -36 dBFS. Continuous mode now calibrates ambient noise for 0.8 seconds, clamps its adaptive speech threshold between 120 and 350 RMS, requires two consecutive speech windows, and ends an utterance after 1.2 seconds of silence. Whisper uses six CPU threads and single-candidate decoding to reduce latency.
 
 The deployed demo may delimit a completed answer with either an `I rkllm:` statistics line or the next `user:` prompt. The GUI accepts both formats before starting Piper playback.
+
+Voice turns cap Qwen output at 64 tokens to reduce generation and playback latency. The accepted post-reboot turn began Bluetooth playback approximately 19 seconds after the Qwen process started; later turns reuse the resident model.

@@ -28,6 +28,7 @@ DEMO = WORKSPACE / "vendor-src/rknn-llm-878f936/examples/multimodal_model_demo/d
 MODEL_DIR = WORKSPACE / "models/qwen3-vl-2b/rkllm-model-zoo-1.2.3"
 VISION_MODEL = MODEL_DIR / "qwen3-vl-2b_vision_rk3588.rknn"
 LANGUAGE_MODEL = MODEL_DIR / "qwen3-vl-2b-instruct_w8a8_rk3588.hf.rkllm"
+VOICE_MAX_TOKENS = "64"
 WHISPER_BUILD = WORKSPACE / "build/whisper.cpp-v1.9.2/bin"
 WHISPER_CLI = WHISPER_BUILD / "whisper-cli"
 WHISPER_MODEL = WORKSPACE / "models/speech/ggml-base.bin"
@@ -349,7 +350,7 @@ class CameraVlmWindow(Gtk.Window):
         env["LD_LIBRARY_PATH"] = str(RKLLM_PREFIX / "lib")
         command = [
             str(DEMO), str(self.keyframe_path), str(VISION_MODEL), str(LANGUAGE_MODEL),
-            "128", "4096", "3", "rk3588",
+            VOICE_MAX_TOKENS, "4096", "3", "rk3588",
         ]
         self.model_process = subprocess.Popen(
             command, stdin=slave, stdout=slave, stderr=slave, env=env, close_fds=True,
