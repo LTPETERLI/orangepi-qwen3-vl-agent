@@ -507,6 +507,21 @@ camera_stack:
     rgb_depth_aligned: true
     model_execution_performed: false
     status: "verified"
+  camera_vlm_gui:
+    toolkit: "GTK 3.24 via system PyGObject"
+    python: "3.10.12"
+    application: "/home/orangepi/qwen3_vl_2b_ws/app/camera_vlm_gui.py"
+    application_sha256: "9486ec1d04a6f1beaf586f8a93edb4f2deca6b368d0534bf615afec7c59be99f"
+    launcher: "/home/orangepi/qwen3_vl_2b_ws/bin/camera-vlm-gui"
+    launcher_sha256: "76bc616f6fc2275f2aa2c61a29b069fd541aea9bb575f3ad2dbb3d9cae6f6292"
+    desktop_entry: "/home/orangepi/Desktop/OrangePi-Qwen3-VL.desktop"
+    display: ":0"
+    launch_verified: true
+    automatic_keyframe_verified: true
+    model_execution_on_launch: false
+    local_question_execution: "user-triggered by Send button"
+    report: "CAMERA_VLM_GUI_REPORT.md"
+    status: "verified"
   v4l2:
     video_nodes: "/dev/video0 through /dev/video5"
     status: "verified"

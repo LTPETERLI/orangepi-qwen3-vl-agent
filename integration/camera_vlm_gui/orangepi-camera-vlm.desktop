@@ -1,0 +1,8 @@
+[Desktop Entry]
+Type=Application
+Name=Orange Pi Qwen3-VL
+Comment=Offline RealSense visual question answering
+Exec=/home/orangepi/qwen3_vl_2b_ws/bin/camera-vlm-gui
+Icon=camera-photo
+Terminal=false
+Categories=Utility;Education;
