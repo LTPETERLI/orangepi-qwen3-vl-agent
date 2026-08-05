@@ -542,13 +542,15 @@ camera_stack:
     toolkit: "GTK 3.24 via system PyGObject"
     python: "3.10.12"
     application: "/home/orangepi/qwen3_vl_2b_ws/app/camera_vlm_gui.py"
-    application_sha256: "3a1801e36f4aca31cc315d6b51b3b5f3053fb110e2da51188687be2bce3482aa"
+    application_sha256: "32b1b7a9bd0da703d4aa15fd1da48c0585805aa12064612d170866b916e5b737"
     preview_executable: "/home/orangepi/qwen3_vl_2b_ws/app/realsense-preview"
-    preview_executable_sha256: "1d458093e34ded315caa9fd4a037eaa87dba7c7824a3179fc8058963d862ea1c"
+    preview_executable_sha256: "83be2132f8775de752e24bda60686c057ddd4c43f4ba2a421a0793e1b706260b"
     preview_stream: "YOLOv8-annotated RGB and aligned colorized depth at 640x480@15"
     object_distance_method: "median of valid aligned-depth samples in the central 60% of each detection box"
     object_detection_ui: "numbered RGB boxes plus bottom-left class, confidence, and per-object distance list"
     object_detection_execution: "user-authorized; live NPU validation passed"
+    object_detection_toggle: "GUI switch restarts preview; disabled mode does not initialize or execute YOLO/RKNN"
+    object_detection_disabled_smoke_test: "verified"
     launcher: "/home/orangepi/qwen3_vl_2b_ws/bin/camera-vlm-gui"
     launcher_sha256: "76bc616f6fc2275f2aa2c61a29b069fd541aea9bb575f3ad2dbb3d9cae6f6292"
     desktop_entry: "/home/orangepi/Desktop/OrangePi-Qwen3-VL.desktop"
@@ -559,12 +561,13 @@ camera_stack:
     validation_observation: "RGB box #1, bottle, 47% confidence, 3.71 m"
     validation_screenshot: "/tmp/camera-vlm-yolo.png on the development laptop (ephemeral evidence)"
     model_execution_on_launch: false
-    local_question_execution: "user-triggered by Send button"
+    local_question_execution: "automatic after speech/end-of-utterance detection in continuous voice mode"
     report: "CAMERA_VLM_GUI_REPORT.md"
     status: "verified"
   offline_speech:
-    interaction: "hold-to-record, offline ASR, automatic prompt submission, offline TTS"
+    interaction: "one-click continuous conversation with local amplitude-based end-of-speech detection, offline ASR, automatic prompt submission, and offline TTS"
     half_duplex: true
+    echo_prevention: "capture pauses while Qwen is answering and while TTS is playing"
     network_required_at_runtime: false
     audio_capture:
       backend: "ALSA"

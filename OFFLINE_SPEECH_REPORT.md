@@ -2,12 +2,14 @@
 
 ## Scope
 
-The camera VLM GUI now supports a local half-duplex voice workflow:
+The camera VLM GUI now supports a local half-duplex, hands-free voice workflow:
 
-1. Hold **按住说话** to record from the Orange Pi ES8388 microphone.
-2. Release the button to run local Chinese transcription with Whisper.
-3. Submit the recognized text to the already deployed Qwen3-VL camera session.
-4. Synthesize the completed answer with Piper and play it through the default PulseAudio output.
+1. Select **开启语音对话** once; the ES8388 microphone then listens continuously.
+2. Local amplitude detection finds speech and submits an utterance after the speaker pauses.
+3. Run local Chinese transcription with Whisper.
+4. Submit the recognized text to the already deployed Qwen3-VL camera session.
+5. Synthesize the completed answer with Piper and play it through the default PulseAudio output.
+6. Resume listening automatically after playback; select **停止语音对话** to exit.
 
 No network connection is required after the speech models and application are installed.
 
@@ -26,7 +28,7 @@ No network connection is required after the speech models and application are in
 
 ## Privacy And Runtime Behavior
 
-Recorded audio, transcripts, and synthesized answers are stored under `logs/voice/`. Speech recognition and synthesis execute locally. The GUI does not start an NPU model at launch; Qwen3-VL still runs only after the user records and submits a question.
+Recorded audio, transcripts, and synthesized answers are stored under `logs/voice/`. Speech recognition and synthesis execute locally. Listening is paused while Qwen3-VL answers and while Piper audio is playing, preventing the speaker output from becoming a new question. The GUI does not start an NPU model at launch; Qwen3-VL still runs only after speech is detected and transcribed.
 
 ## Remaining Validation
 

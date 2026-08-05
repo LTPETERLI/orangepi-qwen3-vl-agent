@@ -106,13 +106,16 @@ int main() try {
     std::signal(SIGINT, stop_handler);
     std::signal(SIGPIPE, stop_handler);
 
+    const char* enabled_value = std::getenv("YOLO_ENABLED");
+    const bool detection_enabled = !enabled_value || std::string(enabled_value) != "0";
     const char* model_path = std::getenv("YOLO_MODEL_PATH");
-    if (!model_path || !*model_path) {
+    if (detection_enabled && (!model_path || !*model_path)) {
         throw std::runtime_error("YOLO_MODEL_PATH is not set");
     }
 
     rknn_app_context_t detector{};
-    if (init_post_process() != 0 || init_yolov8_model(model_path, &detector) != 0) {
+    if (detection_enabled &&
+        (init_post_process() != 0 || init_yolov8_model(model_path, &detector) != 0)) {
         throw std::runtime_error("failed to initialize YOLOv8 detector");
     }
 
@@ -132,7 +135,7 @@ int main() try {
         const rs2::depth_frame depth = frames.get_depth_frame();
         if (!color || !depth) continue;
 
-        if (frame_index % kDetectionInterval == 0) {
+        if (detection_enabled && frame_index % kDetectionInterval == 0) {
             image_buffer_t input{};
             input.width = kWidth;
             input.height = kHeight;
@@ -150,7 +153,7 @@ int main() try {
                 }
                 emit_detections(detections);
             }
-        } else {
+        } else if (detection_enabled) {
             for (auto& detection : detections) {
                 detection.distance_m = median_depth(depth, detection.box);
             }
@@ -169,8 +172,10 @@ int main() try {
     }
 
     pipeline.stop();
-    release_yolov8_model(&detector);
-    deinit_post_process();
+    if (detection_enabled) {
+        release_yolov8_model(&detector);
+        deinit_post_process();
+    }
     return 0;
 } catch (const rs2::error& error) {
     std::cerr << "error=" << error.what() << '\n';
